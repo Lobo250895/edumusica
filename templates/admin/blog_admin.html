@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Admin - Edumúsica</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+
+        <main class="main-content">
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Blog Posts</h1>
+                    <a href="{{ url_for('nuevo_blog') }}" class="btn btn-new-post">
+                        <i class="fas fa-plus"></i> Nuevo Post
+                    </a>
+                </div>
+
+                <table class="posts-table">
+                    <thead>
+                        <tr>
+                            <th>Titulo</th>
+                            <th>Contenido</th>
+                            <th>Autor</th>
+                            <th>Fecha</th>
+                            <th>Vistas</th>
+                            <th>Estado</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr>
+                            <td>{{ post.nombre }}</td>
+                            <td>{{ post.contenido|truncate(50) }}</td>
+                            <td>Prof. {{ post.id_profesor }}</td>
+                            <td>{{ post.fecha_creacion.strftime('%b %d, %Y') }}</td>
+                            <td>{{ post.vistas }}</td>
+                            <td><span class="status-badge status-published">Publicado</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('editar_blog', id=post.id) }}" class="btn btn-edit">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <a href="{{ url_for('eliminar_blog', id=post.id) }}" 
+                                       onclick="return confirm('Estas seguro de eliminar este blog?')" 
+                                       class="btn btn-danger">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-newspaper"></i>
+                                <h3>No se encontro ningun Blog</h3>
+                                
+                                <a href="{{ url_for('nuevo_blog') }}" class="btn btn-new-post">
+                                    <i class="fas fa-plus"></i> Crea un nuevo Blog
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

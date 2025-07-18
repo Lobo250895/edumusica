@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_blog.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+  {% include 'sidebar.html' %}
+  <section class="home">
+    <div class="logo-container">
+      <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+      <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+          <i class="fas fa-arrow-left"></i> Volver al inicio
+      </button>
+    </div>
+
+    <section class="welcome-section">
+      <!-- notificaciones -->
+      <div id="main-content">
+        {% include 'notifications.html' %}
+      </div>
+
+      <div class="blog-container">
+  
+        <div class="blog-header">
+          <h1 class="blog-title">Blog Musical</h1>
+          <button class="btn-new-post" id="toggle-form">
+            <i class='bx bx-plus'></i> Nuevo Post
+          </button>
+        </div>
+
+        <!-- Formulario para crear nuevo post (oculto inicialmente) -->
+        <div class="create-post-container" id="create-post-form" style="display: none;">
+          <div class="form-container">
+            <h2>Crear Nuevo Post</h2>
+            <form action="/crear_post" method="post" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="nombre">Título del Post</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Escribe un título atractivo" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="contenido">Contenido</label>
+                <textarea id="contenido" name="contenido" rows="5" placeholder="Comparte tus conocimientos musicales..." required></textarea>
+              </div>
+              
+              <div class="form-group image-uploader">
+                <label>Imagen destacada</label>
+                <div class="upload-container">
+                  <input type="file" id="file" name="imagen" accept="image/*" hidden>
+                  <div class="img-area" data-img="">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Arrastra o haz clic para subir una imagen</p>
+                    <span>Formatos: JPG, PNG (Máx. 2MB)</span>
+                  </div>
+                  <button type="button" class="btn-select-image">Seleccionar Imagen</button>
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="btn-cancel" id="cancel-form">Cancelar</button>
+                <button type="submit" class="btn-publish">Publicar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Grid de posts existentes -->
+        <div class="blog-grid">
+          {% if blogs %}
+            {% for blog in blogs %}
+            <div class="blog-card" onclick="location.href='/blog/{{ blog.id }}';">
+              <div class="card-image">
+                <img src="{{ blog.imagen }}" alt="{{ blog.nombre }}">
+                <div class="card-overlay"></div>
+              </div>
+              <div class="card-content">
+                <div class="card-header">
+                  <h3>{{ blog.nombre }}</h3>
+                  <div class="card-stats">
+                    <span><i class='bx bx-like'></i> {{ blog.estadisticas.likes }}</span>
+                    <span><i class='bx bx-comment'></i> {{ blog.estadisticas.comentarios }}</span>
+                    <span><i class='bx bx-show'></i> {{ blog.estadisticas.vistas }}</span>
+                  </div>
+                </div>
+                <p class="card-excerpt">{{ blog.contenido[:120] }}...</p>
+                <div class="card-footer">
+                  <span class="read-more">Leer más <i class='bx bx-chevron-right'></i></span>
+                  {% if blog.id_profesor == session['id'] %}
+                  <div class="card-actions">
+                    <a href="{{ url_for('editar_post', blog_id=blog.id) }}" class="btn-edit"><i class='bx bx-edit'></i></a>
+                    <form action="{{ url_for('eliminar_post', blog_id=blog.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este post?');">
+                      <button type="submit" class="btn-delete"><i class='bx bx-trash'></i></button>
+                    </form>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state">
+              <img src="{{ url_for('static', filename='img/empty-blog.png') }}" alt="No hay posts">
+              <h3>El blog está vacío</h3>
+              <p>Crea tu primer post para compartir conocimientos musicales con la comunidad.</p>
+              <button class="btn-primary" id="empty-new-post">Crear primer post</button>
+            </div>
+          {% endif %}
+        </div>
+
+
+        <div class="news-section">
+          <div class="news-grid">
+            {% for noticia in noticias %}
+            <div class="news-card">
+              <div class="news-content">
+                <h3>{{ noticia.title }}</h3>
+                <p class="news-excerpt">{{ noticia.description|truncate(150) }}</p>
+                <a href="{{ noticia.url }}" target="_blank" class="news-link">Leer más <i class='bx bx-news'></i></a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if noticia %}
+        <div class="featured-post">
+          <div class="featured-image">
+            <img src="{{ noticia.image }}" alt="{{ noticia.title }}">
+          </div>
+          <div class="featured-content">
+            <div class="post-badge">Destacado</div>
+            <h2>{{ noticia.title }}</h2>
+            <p class="post-date">{{ noticia.publishedAt[:10] }}</p>
+            <p class="post-excerpt">{{ noticia.description }}</p>
+
+            <div class="post-details">
+              <div class="detail-item">
+                <i class='bx bx-calendar'></i>
+                <span>{{ noticia.publishedAt[:10] }}</span>
+              </div>
+              <div class="detail-item">
+                <i class='bx bx-link-external'></i>
+                <a href="{{ noticia.url }}" target="_blank">Leer más</a>
+              </div>
+            </div>
+
+            <div class="post-tags">
+              <span class="tag">#Coldplay</span>
+              <span class="tag">#Música</span>
+              <span class="tag">#Noticias</span>
+            </div>
+          </div>
+        </div>
+        {% else %}
+          <p style="text-align:center; margin-top:40px;">No se encontró ninguna noticia sobre Coldplay.</p>
+        {% endif %}
+
+      </div>
+    </section>
+
+    {% include 'footer.html' %}
+  </section>
+
+  <script>
+    window.IMG_BASE_PATH = "{{ url_for('static', filename='img/') }}";
+    window.LOGO_DARK = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+    window.LOGO_LIGHT = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+    window.LOGO_DEFAULT = "{{ url_for('static', filename='img/logo-default.png') }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/blog_js.js') }}"></script>
+
+</body>
+</html>

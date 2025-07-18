@@ -1,0 +1,13 @@
+<div class="notification-panel" id="notification-panel" data-id-profesor="{{ session.get('id_profesor', 0) }}">
+  <button id="close-notifications" class="close-btn">&times;</button>
+  <h3>Notificaciones</h3>
+  <div id="notification-list"></div>
+</div>
+
+<script>
+// Obtener el valor desde el atributo 'data-id-profesor'
+const id_profesor = document.getElementById('notification-panel').dataset.idProfesor;
+
+// Imprimir el valor en la consola
+console.log("ID del profesor:", id_profesor);
+</script>

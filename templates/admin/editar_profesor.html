@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Ingresa Música</h1>
+                </div>
+                <h1>Editar Profesor</h1>
+                <form method="POST" action="">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" name="nombre" value="{{ profesor.nombre }}" required>
+
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" name="apellido" value="{{ profesor.apellido }}" required>
+
+                    <label for="mail">Email:</label>
+                    <input type="mail" name="mail" value="{{ profesor.mail }}" required>
+
+                    <label for="rol">Rol:</label>
+                        <select name="rol" required>
+                            <option value="admin" {% if profesor.rol == 'administrador' %}selected{% endif %}>Administrador</option>
+                            <option value="profesor" {% if profesor.rol == 'profesor' %}selected{% endif %}>Profesor</option>
+                        </select>
+
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                    <a href="{{ url_for('usuarios_admin') }}" class="btn btn-danger">Cancelar</a>
+                </form>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

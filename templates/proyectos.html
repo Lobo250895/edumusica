@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilos_proyectos.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    {% include 'sidebar.html' %}
+
+    <section class="home">
+        <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+        </div>
+        
+        <div id="main-content">
+            {% include 'notifications.html' %}
+
+            <section class="banner">
+                <div class="banner">
+                    <video autoplay loop muted>
+                        <source src="{{ url_for('static', filename='img/HAUSER - Adagio (Albinoni).mp4') }}" type="video/mp4">
+                        Tu navegador no soporta el formato de video.
+                    </video>
+                    <div class="banner-text">
+                        <h1>Proyectos</h1>
+                        <p>Realiza tus Proyectos</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="projects-dashboard">
+
+                <!-- Tabla 3: Ayuda con los Proyectos -->
+                <div class="projects-section">
+                    <h2 class="section-title">Ayuda para crear Proyectos</h2>
+                    <div class="projects-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fecha de Subida</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for proyecto_admin in proyectos_admin %}
+                                <tr>
+                                    <td>{{ proyecto_admin['nombre'] }}</td>
+                                    <td>{{ proyecto_admin['fecha_subida'] }}</td>
+                                    <td>{{ proyecto_admin['estado'] }}</td>
+                                    <td>
+                                        <button class="btn-ver-proyecto" 
+                                                data-id="{{ proyecto_admin.id }}"
+                                                data-url="{{ proyecto_admin['proyecto'] }}">
+                                            Ver Proyecto
+                                        </button>
+                                    </td>         
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5">No hay proyectos cargados por el administrador.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Tabla 1: Mis Proyectos -->
+                <div class="projects-section">
+                    <h2 class="section-title">Mis Proyectos</h2>
+                    <div class="projects-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fecha de Subida</th>
+                                    <th>Situacion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for proyecto in proyectos_propios %}
+                                <tr>
+                                    <td>{{ proyecto.nombre }}</td>
+                                    <td>{{ proyecto.fecha_subida }}</td>
+                                    <td>{{proyecto.estado}}</td>
+                                    <td>
+                                        {% if proyecto.es_publico %}
+                                            Público
+                                        {% else %}
+                                            Privado
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn-ver-proyecto" 
+                                                data-id="{{ proyecto.id }}"
+                                                data-url="{{ proyecto.proyecto }}">
+                                            Ver Proyecto
+                                        </button>
+
+                                        <button class="btn-eliminar-proyecto" 
+                                                data-id="{{ proyecto.id }}"
+                                                title="Eliminar proyecto">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Tabla 2: Proyectos públicos -->
+                <div class="projects-section">
+                    <h2 class="section-title">Proyectos Públicos</h2>
+                    <div class="projects-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fecha de Subida</th>
+                                     <th>Situacion</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for proyecto in proyectos_publicos %}
+                                <tr>
+                                    <td>{{ proyecto.nombre }}</td>
+                                    <td>{{ proyecto.fecha_subida }}</td>
+                                    <td>{{proyecto.estado}}</td>
+                                    <td>
+                                        {% if proyecto.es_publico %}
+                                            Público
+                                        {% else %}
+                                            Privado
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn-ver-proyecto" 
+                                                data-id="{{ proyecto.id }}"
+                                                data-url="{{ proyecto.proyecto }}">
+                                            Ver Proyecto
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+            </div>
+
+            <!-- Contenedor de comentarios -->
+                <div class="comments-container" id="comments-container">
+                    <h2>Comentarios: <span id="current-project-name">Selecciona un proyecto</span></h2>
+                    
+                    <div id="no-project-selected">
+                        <p>Selecciona un proyecto para ver los comentarios</p>
+                    </div>
+                    
+                    <div id="comments-content" style="display: none;">
+                        <!-- Área para nuevo comentario -->
+                        <div class="new-comment-box">
+                            <textarea id="new-comment-text" placeholder="Escribe tu comentario..."></textarea>
+                            <button id="submit-comment">Enviar</button>
+                        </div>
+                        
+                        <!-- Lista de comentarios -->
+                        <div id="comments-list">
+                            <!-- Plantilla oculta para comentarios -->
+                            <div class="comment-template" style="display: none;">
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <img src="" class="comment-avatar" alt="Avatar">
+                                        <span class="comment-author"></span>
+                                        <span class="comment-date"></span>
+                                    </div>
+                                    <div class="comment-content"></div>
+                                    <div class="comment-actions">
+                                        <button class="btn-reply">Responder</button>
+                                    </div>
+                                    
+                                    <!-- Área de respuesta -->
+                                    <div class="reply-box" style="display: none;">
+                                        <textarea class="reply-text" placeholder="Escribe tu respuesta..."></textarea>
+                                        <button class="btn-submit-reply">Enviar</button>
+                                        <button class="btn-cancel-reply">Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Formulario de subida -->
+            <div class="upload-section">
+                <h2 class="section-title">Subir Proyecto</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div>
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <form action="{{ url_for('proyectos') }}" method="POST" enctype="multipart/form-data" class="form-grid" id="upload-form" onsubmit="return handleFormSubmit(event)">
+                    <!-- Fila 1: Nombre y Autor -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Proyecto</label>
+                        <input type="text" id="nombre" name="nombre" required placeholder="Nombre del Proyecto">
+                    </div>
+                    <div class="form-group">
+                        <label for="autor">Autor</label>
+                        <input type="text" id="autor" name="autor" required placeholder="Nombre del Autor">
+                    </div>
+        
+                    <!-- Fila 2: Archivo adjunto -->
+                    <div class="form-group full-width">
+                        <label for="file" class="file-label">
+                            <div class="upload-area">
+                                <p id="file-info">Arrastra tu archivo Word o PDF aquí</p>
+                                <span>o selecciona uno</span>
+                                <input type="file" id="file" name="file" accept=".docx, .pdf" required>
+                            </div>
+                            <p class="info">El archivo puede ser un documento Word o PDF. El peso máximo permitido es de 5MB.</p>
+                        </label>
+                    </div>
+        
+                    <!-- Fila 3: Estado y Público -->
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <input type="text" id="estado" name="estado" required placeholder="Estado del Proyecto">
+                    </div>
+                    <div class="form-group">
+                        <label for="es_publico">¿Es público?</label>
+                        <select id="es_publico" name="es_publico" required>
+                            <option value="0">No</option>
+                            <option value="1">Sí</option>
+                        </select>
+                    </div>
+        
+                    <!-- Fila 4: Botón -->
+                    <div class="form-group full-width">
+                        <button type="submit">Subir Proyecto</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Visor de archivos -->
+            <div id="visor" class="visor">
+                <div class="visor-content">
+                    <div class="visor-header">
+                        <button id="cerrar-visor">Cerrar</button>
+                    </div>
+                    <iframe id="iframe-proyecto"></iframe>
+                </div>
+            </div>
+
+            {% include 'footer.html' %}
+        </div>
+    </section>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_proyectos.js') }}"></script>
+<script>
+const logoModoOscuro = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+const logoModoClaro = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+</script>
+<script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+     
+</body>
+</html>

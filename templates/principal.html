@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido - EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+  {% include 'sidebar.html' %}
+
+<section class="home">
+    <div class="imagen_logo" id="logo-container">
+      <img id="logo" src="{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}" alt="Logo EduMúsica" width="140" height="57" class="d-inline-block align-text-top">
+    </div>
+
+  <section class="welcome-section">
+    <section class="welcome-banner">
+      <div class="welcome-inner">
+        <h1 class="welcome-title">
+          Bienvenido, {{ profesor['nombre'] }} {{ profesor['apellido'] }}
+        </h1>
+
+        <p class="welcome-text">
+          Explora las herramientas y recursos que te ayudarán en tu enseñanza musical.<br>
+          ¡Comienza tu jornada musical hoy mismo!
+        </p>
+      </div>
+
+        <div>
+          <div class="container mt-5 consulta-pagos">
+            <h1 class="titulo-consulta">Consulta de Fecha de Pago de Haberes</h1>
+            
+    
+            {% block content %}
+            <form method="POST" action="#resultados" class="form-consulta">
+                <input type="text" name="provincia" placeholder="Provincia" required class="input-consulta">
+                <button type="submit" class="btn-consulta">Buscar</button>
+            </form>
+        
+            {% if resultados %}
+                <ul class="resultados-lista">
+                {% for item in resultados %}
+                    <li class="resultado-item">
+                        <strong>Fecha:</strong> {{ item.fecha_pago }} | 
+                        <strong>Provincia:</strong> {{ item.provincia }} | 
+                        <a href="{{ item.fuente }}" target="_blank">Fuente</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="sin-resultados">No hay resultados.</p>
+            {% endif %}
+        
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <p class="flash-message">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% endblock %}
+          </div>   
+        </div>
+    </section>
+
+        <!-- Panel de notificaciones -->
+        <div id="main-content">
+          <!-- Incluir la plantilla de notificaciones -->
+          {% include 'notifications.html' %}
+        </div>
+    <div class="card-container">
+      <div class="card_inicio">
+        <i class='bx bx-user card-icon'></i>
+        <h3>Perfil</h3>
+        <p>Edita tu perfil en la app</p>
+        <a href="{{ url_for('editar_perfil') }}" class="card-button_inicio">Edita tu perfil</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-chalkboard card-icon'></i>
+        <h3>Educación</h3>
+        <p>Crea y gestiona educación colaborativos con tus alumnos.</p>
+        <a href="{{ url_for('educacion') }}" class="card-button_inicio">Explorar Educación</a>
+      </div>
+  
+      <div class="card_inicio">
+        <i class='bx bx-briefcase card-icon'></i>
+        <h3>Proyectos</h3>
+        <p>Crea y gestiona proyectos colaborativos con tus alumnos.</p>
+        <a href="{{ url_for('proyectos') }}" class="card-button_inicio">Explorar Proyectos</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-book card-icon'></i>
+        <h3>Material de Trabajo</h3>
+        <p>Accede a ejercicios y recursos pedagógicos.</p>
+        <a href="{{ url_for('libros') }}" class="card-button_inicio">Ir a Material</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-calendar card-icon'></i>
+        <h3>Agenda</h3>
+        <p>Organiza tus clases, ensayos y eventos importantes.</p>
+        <a href="{{ url_for('agenda') }}" class="card-button_inicio">Ver Agenda</a>
+      </div>
+  
+      <div class="card_inicio">
+        <i class='bx bx-music card-icon'></i>
+        <h3>Musica</h3>
+        <p>Explora musica para enriquecer tus clases.</p>
+        <a href="{{ url_for('musica') }}" class="card-button_inicio">Ver Música</a>
+      </div>
+      <div class="card_inicio">
+        <i class='bx bx-palette card-icon'></i>
+        <h3>Creacion de Instrumentos</h3>
+        <p>Explora instructivos para realizar instrumentos.</p>
+        <a href="{{ url_for('instrumentos') }}" class="card-button_inicio">Creacion</a>
+      </div>
+  
+      <div class="card_inicio">
+        <i class='bx bx-video card-icon'></i>
+        <h3>Videos</h3>
+        <p>Explora videos educativos para enriquecer tus clases.</p>
+        <a href="{{ url_for('videos') }}" class="card-button_inicio">Ver Videos</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-folder card-icon'></i>
+        <h3>Mi Inspiracion</h3>
+        <p>Coloca tus creaciones, canciones, partituras o letras.</p>
+        <a href="{{ url_for('mi_inspiracion') }}" class="card-button_inicio">Ver mis creaciones</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-microphone card-icon'></i>
+        <h3>Grabación</h3>
+        <p>Realiza grabaciones de voz y encontra tus pistas guardadas.</p>
+        <a href="{{ url_for('grabacion') }}" class="card-button_inicio">realizar una grabación</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-news card-icon'></i>
+        <h3>Blog</h3>
+        <p>Encuentra opiniones en el blog.</p>
+        <a href="{{ url_for('blog') }}" class="card-button_inicio">Ver blog</a>
+      </div>
+
+      <div class="card_inicio">
+        <i class='bx bx-game card-icon'></i>
+        <h3>Juegos</h3>
+        <p>Encuentra diversos juegos para tus clases.</p>
+        <a href="{{ url_for('juegos') }}" class="card-button_inicio">Ver Juegos</a>
+      </div>
+
+      
+    </div>
+  </section>
+  
+  {% include 'footer.html' %}
+</section>
+
+<script>
+const logoModoOscuro = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+const logoModoClaro = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+</script>
+<script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_api.js') }}"></script>
+
+</body>
+</html>

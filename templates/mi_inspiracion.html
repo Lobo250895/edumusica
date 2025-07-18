@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Inspiración- EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+       .home {
+        padding: 2rem;
+        }
+
+        /*Contenido del modal */
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            text-align: center;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+  {% include 'sidebar.html' %}
+    <section class="home">
+        <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+        </div>    
+        
+        <!-- Panel de notificaciones -->
+      <div id="main-content">
+        {% include 'notifications.html' %}
+      </div>
+      <div class="nombre_usuario">
+        <h2><i class='bx bx-file'></i> Archivos del Profesor de Artística <i class='bx bx-music'></i></h2>
+      </div>
+
+        <div class="contenedor-principal_inspiracion">
+            <div class="archivos_personales">
+                <p class="descripcion-archivos">
+                Seleccioná un archivo para realizar acciones como <strong>escuchar</strong>, <strong>ver</strong>, <strong>editar</strong> o <strong>imprimir</strong>, según el tipo de contenido.
+                </p>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                <table class="tabla-estilizada-inspiracion">
+                    <thead>
+                        <tr>
+                            <th>Nombre del archivo</th>
+                            <th>Tipo de archivo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if archivos %}
+                            {% for archivo in archivos %}
+                            <tr>
+                                <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    {{ archivo['nombre'] }}
+                                </td>
+                                <td>{{ archivo['tipo_archivo'] }}</td>
+                                <td>
+                                    <span class="estado-archivo" data-id="{{ archivo['id'] }}">
+                                        {{ 'Público' if archivo['estado'] == 1 else 'Privado' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="acciones-archivo">
+                                        <button class="ver-archivo-btn"
+                                            data-tipo="{{ archivo['tipo_archivo']|lower }}"
+                                            data-ruta="{{ archivo['ruta_archivo'] }}"
+                                            title="Abrir en visor">
+                                            {% if archivo['tipo_archivo']|lower == 'mp3' %}
+                                                <i class="fas fa-headphones"></i> Escuchar
+                                            {% elif archivo['tipo_archivo']|lower in ['pdf', 'word', 'txt','texto', 'docx', 'doc'] %}
+                                                <i class="fas fa-print"></i> Editar/Imprimir
+                                            {% elif archivo['tipo_archivo']|lower in ['imagen', 'jpg', 'jpeg', 'png'] %}
+                                                <i class="fas fa-eye"></i> Ver
+                                            {% else %}
+                                                <i class="fas fa-file"></i> Abrir
+                                            {% endif %}
+                                        </button>
+                                        
+                                        {% if archivo['estado'] == 1 %}
+                                        <a href="{{ archivo['ruta_archivo'] }}" download class="btn btn-sm btn-outline-secondary" title="Descargar">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        {% endif %}
+                                        
+                                        <button class="cambiar-estado-btn btn btn-sm btn-outline-primary"
+                                                data-id="{{ archivo['id'] }}"
+                                                data-estado="{{ archivo['estado'] }}"
+                                                title="Cambiar visibilidad">
+                                            <i class="fas fa-exchange-alt"></i>
+                                        </button>
+                                        
+                                        <button class="eliminar-archivo-btn btn btn-sm btn-outline-danger"
+                                                data-id="{{ archivo['id'] }}"
+                                                data-ruta="{{ archivo['ruta_archivo'] }}"
+                                                title="Eliminar permanentemente">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="no-archivos text-center py-4">
+                                    <i class="fas fa-folder-open fa-2x mb-2"></i><br>
+                                    No tienes archivos cargados aún.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="archivoModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <div id="archivoDisplay"></div>
+                </div>
+            </div>
+        
+            <div class="inspiracion-container">
+                <div class="container_update">
+                    <h2>Adjunta archivos</h2>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div>
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <form action="{{ url_for('mi_inspiracion') }}" method="POST" enctype="multipart/form-data" class="form-grid">
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" required placeholder="Nombre de tu creación">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="file" class="file-label">
+                                <div class="upload-area">
+                                    <p id="file-info">Arrastra tu archivo aquí</p>
+                                    <span>o haz clic para seleccionar</span>
+                                    <input type="file" id="file" name="file" accept=".docx,.txt,.pdf,.jpg,.jpeg,.png,.mp3" required>
+                                </div>
+                                <p class="info">Formatos aceptados: Word (.docx), Texto (.txt), PDF (.pdf), Imágenes (.jpg, .jpeg, .png), Audio (.mp3)</p>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipo_archivo">Tipo de Archivo</label>
+                            <select id="tipo_archivo" name="tipo_archivo" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="Word">Word (.docx)</option>
+                                <option value="Texto">Texto (.txt)</option>
+                                <option value="PDF">PDF (.pdf)</option>
+                                <option value="Imagen">Imagen</option>
+                                <option value="Mp3">Audio MP3</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                            <input type="checkbox" name="estado" value="1"> Hacer público
+                            </label>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <button type="submit">
+                                <i class="fas fa-upload"></i> Subir Archivo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div> 
+      {% include 'footer.html' %}
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Cambiar estado
+    document.querySelectorAll('.cambiar-estado-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idArchivo = this.dataset.id;
+            const estadoActual = parseInt(this.dataset.estado);
+            const nuevoEstado = estadoActual === 1 ? 0 : 1;
+            
+            fetch('/cambiar_estado_archivo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id_archivo=${idArchivo}&nuevo_estado=${nuevoEstado}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar el texto del estado
+                    const estadoElement = document.querySelector(`.estado-archivo[data-id="${idArchivo}"]`);
+                    estadoElement.textContent = nuevoEstado === 1 ? 'Público' : 'Privado';
+                    
+                    // Actualizar el estado en el botón
+                    this.dataset.estado = nuevoEstado;
+                    
+                    alert('Estado cambiado exitosamente');
+                } else {
+                    alert('Error al cambiar estado');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cambiar estado');
+            });
+        });
+    });
+    
+    // Eliminar archivo
+    document.querySelectorAll('.eliminar-archivo-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres eliminar este archivo?')) {
+                const idArchivo = this.dataset.id;
+                const rutaArchivo = this.dataset.ruta;
+                
+                fetch('/eliminar_archivo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `id_archivo=${idArchivo}&ruta_archivo=${rutaArchivo}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Eliminar la fila de la tabla
+                        this.closest('tr').remove();
+                        alert('Archivo eliminado exitosamente');
+                    } else {
+                        alert('Error al eliminar archivo');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar archivo');
+                });
+            }
+        });
+    });
+});
+    </script>
+    
+    <script src="{{ url_for('static', filename='js/inspiracion_js.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>

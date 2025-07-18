@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        a { margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Usuarios</h1>
+                 
+                </div>
+                <section>
+                    <h1>Administradores</h1>
+                    {% if admins %}
+                    <table>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                        {% for admin in admins %}
+                        <tr>
+                            <td>{{ admin.nombre }} </td>
+                            <td>{{ admin.apellido }}</td>
+                            <td>{{ admin.mail }} </td>
+                            <td>{{ admin.rol }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="/editar_usuario/{{ admin.id }}" class="btn btn-edit">Editar</a>
+                                    <a href="/eliminar_usuario/{{ admin.id }}" 
+                                    class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+                                </div>    
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <p>No hay administradores registrados</p>
+                    {% endif %}
+                    <a href="/nuevo_usuario" class="btn btn-primary">Agregar Administrador</a>
+                </section>
+
+                <section>
+                    <h1>Profesores</h1>
+                    {% if usuarios %}
+                    <table>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.apellido }}</td>
+                            <td>{{ usuario.mail }}</td>
+                            <td>{{ usuario.rol }}</td>
+                            <td>
+                                <a href="/editar_profesor/{{ usuario.id }}" class="btn btn-edit">Editar</a>
+                                <a href="/eliminar_profesor/{{ usuario.id }}" 
+                                class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <p>No hay profesores registrados</p>
+                    {% endif %}
+                    <a href="/nuevo_profesor"class="btn btn-primary">Agregar Profesor</a>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+</body>
+</html>

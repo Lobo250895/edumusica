@@ -1,0 +1,93 @@
+<nav class="sidebar close">
+    <header>
+      <div class="image-text">
+        <div class="user-image">
+            <img src="{{ profesor.imagen_url }}" alt="Usuario" class="circle-image" height="60px" width="60px">
+        </div>
+      </div>
+      <i class='bx bx-chevron-right toggle'></i>
+    </header>
+    <div class="menu-bar">
+      <div class="menu">
+          <h3>Menú</h3>
+        <ul class="menu-links">
+          <li class="nav-link">
+            <button id="notification-btn">🔔 <span id="notification-count">0</span></button>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('principal') }}" >
+              <i class='bx bx-home-alt icon'></i>
+              <span class="text nav-text">Inicio</span>
+            </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('educacion') }}">
+              <i class='bx bx-book icon about-icon'></i>
+              <span class="text nav-text">Educacion</span>
+            </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('proyectos') }}">
+              <i class='bx bx-briefcase icon'></i>
+              <span class="text nav-text">Proyectos</span>
+            </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('videos') }}">
+              <i class='bx bx-video icon'></i>
+              <span class="text nav-text">Videos</span>
+            </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('musica') }}">
+              <i class='bx bx-music icon'></i>
+              <span class="text nav-text">Música</span>
+            </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('libros') }}">
+              <i class='bx bx-bookmark icon'></i>
+              <span class="text nav-text">Material de trabajo</span>
+            </a>
+          </li>
+          <li class="nav-link">
+              <a href="{{ url_for('blog') }}">
+                <i class='bx bx-pencil icon'></i>
+                <span class="text nav-text">Blog</span>
+              </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('agenda') }}">
+              <i class='bx bx-calendar icon'></i>
+              <span class="text nav-text">Agenda</span>
+            </a>
+          </li>
+          <li class="nav-link">
+            <a href="{{ url_for('ayuda') }}">
+              <i class='bx bx-help-circle icon'></i>
+              <span class="text nav-text">Ayuda</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="bottom-content">
+        <li class="">
+          <a href="{{ url_for('logout') }}">
+            <i class='bx bx-log-out icon'></i>
+            <span class="text nav-text">Cerrar Sesion</span>
+          </a>
+        </li>
+        <li class="mode">
+          <div class="sun-moon">
+            <i class='bx bx-moon icon moon'></i>
+            <i class='bx bx-sun icon sun'></i>
+          </div>
+          <span class="mode-text text">Dark mode</span>
+          <div class="toggle-switch">
+            <span class="switch"></span>
+          </div>
+        </li>
+      </div>
+    </div>
+</nav>
+

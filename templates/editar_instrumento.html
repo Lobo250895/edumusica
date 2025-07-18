@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editar Instrumento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+<div class="container mt-4">
+    <div class="logo-container">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+    </div>
+    <h2>Editar Instrumento</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título *</label>
+            <input type="text" class="form-control" id="titulo" name="titulo" required
+                   value="{{ instrumento.titulo }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción *</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required>{{ instrumento.descripcion }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="estado" class="form-label">Estado *</label>
+            <select class="form-select" id="estado" name="estado" required>
+                <option value="privado" {% if instrumento.estado == 'privado' %}selected{% endif %}>Privado</option>
+                <option value="publico" {% if instrumento.estado == 'publico' %}selected{% endif %}>Público</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="video_url" class="form-label">URL de Video (opcional)</label>
+            <input type="url" class="form-control" id="video_url" name="video_url"
+                   value="{{ instrumento.video_url or '' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="imagen" class="form-label">Imagen (JPG o PNG)</label>
+            <input type="file" class="form-control" id="imagen" name="imagen" accept=".jpg,.jpeg,.png">
+            {% if instrumento.imagen %}
+                <small>Imagen actual: {{ instrumento.imagen }}</small><br>
+                <img src="{{ url_for('static', filename='uploads/luthiers/' + instrumento.imagen) }}" alt="Imagen actual" style="max-height:150px;">
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="pdf" class="form-label">Archivo PDF (opcional)</label>
+            <input type="file" class="form-control" id="pdf" name="pdf" accept=".pdf">
+            {% if instrumento.pdf_url %}
+                <small>PDF actual: <a href="{{ url_for('static', filename='uploads/luthiers/' + instrumento.pdf_url) }}" target="_blank">Ver PDF</a></small>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="{{ url_for('instrumentos') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Música Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+          <!-- Sidebar -->
+          {% include 'admin/sidebar_admin.html' %}
+          <main class="main-content">
+              <div class="dashboard-content">
+                  <div class="page-header">
+                   
+                  </div>
+                  <h1>Biblioteca Musical</h1>
+                  <table>
+                    <tr><th>Título</th><th>Artista</th><th>Acciones</th></tr>
+                    {% for cancion in canciones %}
+                    <tr>
+                      <td>{{ cancion.titulo }}</td>
+                      <td>{{ cancion.artista }}</td>
+                      <td>{{ cancion.categoria }}</td>
+                      <td><a href="/editar_musica/{{ cancion.id }}" class="btn btn-success">Editar</a> | <a href="/eliminar_musica/{{ cancion.id }}" class="btn btn-danger">Eliminar</a></td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                  <a href="/nueva_musica" class="btn btn-primary">Agregar Cancion</a>
+                  
+              </div>
+          </main>
+    </div>
+</body>
+</html>

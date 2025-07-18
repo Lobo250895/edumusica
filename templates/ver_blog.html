@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ blog.nombre }} | EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+      /* Estilos generales */
+      .blog-detail-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .back-button-container {
+        margin-bottom: 30px;
+      }
+
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-back:hover {
+        color: var(--primary-dark);
+        transform: translateX(-3px);
+      }
+
+      .btn-back i {
+        font-size: 1.2rem;
+      }
+
+      /* Artículo del blog */
+      .blog-article {
+        background: var(--card-bg);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+
+      .blog-featured-image {
+        height: 400px;
+        overflow: hidden;
+      }
+
+      .blog-featured-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .blog-header {
+        padding: 30px;
+      }
+
+      .blog-title {
+        font-size: 2rem;
+        margin: 0 0 15px 0;
+        color: var(--text-color);
+        line-height: 1.3;
+      }
+
+      .blog-meta {
+        display: flex;
+        gap: 20px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+
+      .blog-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .blog-content {
+        padding: 0 30px 30px;
+        color: var(--text-color);
+        line-height: 1.8;
+        font-size: 1.05rem;
+      }
+
+      .blog-content p {
+        margin-bottom: 1.5em;
+      }
+
+      .blog-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      /* Acciones del blog */
+      .blog-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        border-top: 1px solid var(--border-color);
+        background: var(--card-bg-light);
+      }
+
+      .blog-stats {
+        display: flex;
+        gap: 25px;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-light);
+      }
+
+      .btn-like {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-light);
+        transition: all 0.3s ease;
+        padding: 5px;
+      }
+
+      .btn-like:hover {
+        color: var(--primary-color);
+      }
+
+      .btn-like.animate-like {
+        animation: likeAnimation 0.8s ease;
+        color: var(--primary-color);
+      }
+
+      @keyframes likeAnimation {
+        0% { transform: scale(1); }
+        25% { transform: scale(1.2); }
+        50% { transform: scale(0.9); }
+        75% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+
+      .share-options {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .share-options span {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .social-share {
+        color: var(--text-light);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      .social-share:hover {
+        transform: translateY(-3px);
+      }
+
+      .social-share.bxl-facebook:hover { color: #3b5998; }
+      .social-share.bxl-twitter:hover { color: #1da1f2; }
+      .social-share.bxl-whatsapp:hover { color: #25d366; }
+
+      /* Sección de comentarios */
+      .comments-section {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        margin: 0 0 25px 0;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .comment-form {
+        margin-bottom: 30px;
+      }
+
+      .comment-form .form-group {
+        margin-bottom: 15px;
+      }
+
+      .comment-form textarea {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: var(--input-bg);
+        color: var(--text-color);
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .comment-form textarea:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+      }
+
+      .btn-submit {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-submit:hover {
+        background: var(--primary-dark);
+      }
+
+      /* Lista de comentarios */
+      .comments-list {
+        margin-top: 30px;
+      }
+
+      .comment {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .comment:last-child {
+        border-bottom: none;
+      }
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .comment-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .author-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+
+      .author-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .author-info strong {
+        color: var(--text-color);
+        font-size: 0.95rem;
+      }
+
+      .comment-date {
+        color: var(--text-light);
+        font-size: 0.8rem;
+      }
+
+      .btn-reply {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-reply:hover {
+        background: rgba(74, 20, 140, 0.1);
+      }
+
+      .comment-content {
+        margin-left: 52px;
+        margin-bottom: 15px;
+      }
+
+      .comment-content p {
+        margin: 0;
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      /* Formulario de respuesta */
+      .reply-form {
+        margin-left: 52px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        background: var(--card-bg-light);
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .reply-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: var(--input-bg);
+        color: var(--text-color);
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .btn-cancel-reply {
+        background: var(--card-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        padding: 8px 15px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cancel-reply:hover {
+        background: var(--border-color);
+      }
+
+      .btn-submit-reply {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-submit-reply:hover {
+        background: var(--primary-dark);
+      }
+
+      /* Respuestas a comentarios */
+      .comment-replies {
+        margin-left: 52px;
+        margin-top: 20px;
+        padding-left: 20px;
+        border-left: 2px solid var(--border-color);
+      }
+
+      .comment.reply {
+        padding: 15px 0;
+      }
+
+      .comment.reply .comment-header {
+        margin-bottom: 10px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .blog-featured-image {
+          height: 250px;
+        }
+        
+        .blog-header,
+        .blog-content {
+          padding: 20px;
+        }
+        
+        .blog-title {
+          font-size: 1.6rem;
+        }
+        
+        .blog-actions {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
+        }
+        
+        .comment-content,
+        .reply-form,
+        .comment-replies {
+          margin-left: 0;
+        }
+        
+        .comment-replies {
+          padding-left: 15px;
+        }
+      }
+    </style>
+</head>
+
+<body>
+  {% include 'sidebar.html' %}
+
+  <section class="home">
+    <div class="imagen_logo" id="logo-container">
+      <img id="logo" src="{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}" alt="Logo EduMúsica" width="140" height="57" class="d-inline-block align-text-top">
+    </div>
+
+    <!-- Panel de notificaciones -->
+    <div id="main-content">
+      {% include 'notifications.html' %}
+    </div>
+    
+    <div class="blog-detail-container">
+      <!-- Botón de volver -->
+      <div class="back-button-container">
+        <a href="{{ url_for('blog') }}" class="btn-back">
+          <i class='bx bx-arrow-back'></i> Volver al blog
+        </a>
+      </div>
+
+      <!-- Contenido principal del blog -->
+      <article class="blog-article">
+        <!-- Imagen destacada -->
+        <div class="blog-featured-image">
+          <img src="{{ blog.imagen }}" alt="{{ blog.nombre }}">
+        </div>
+
+        <!-- Cabecera del artículo -->
+        <header class="blog-header">
+          <h1 class="blog-title">{{ blog.nombre }}</h1>
+          <div class="blog-meta">
+            <span class="publish-date">
+              <i class='bx bx-calendar'></i> Publicado el {{ blog.fecha_creacion.strftime('%d/%m/%Y') }}
+            </span>
+            <span class="author">
+              <i class='bx bx-user'></i> Por {{ blog.autor.nombre if blog.autor else 'Administrador' }}
+            </span>
+          </div>
+        </header>
+
+        <!-- Contenido del artículo -->
+        <div class="blog-content">
+          {{ blog.contenido|safe }}
+        </div>
+
+        <!-- Estadísticas y acciones -->
+        <div class="blog-actions">
+          <div class="blog-stats">
+            <div class="stat-item">
+              <button class="btn-like" name="me_gusta" form="like-form">
+                <i class='bx bx-like'></i>
+                <span>{{ estadisticas.likes }}</span>
+              </button>
+              <form method="POST" id="like-form" class="like-form"></form>
+            </div>
+            
+            <div class="stat-item">
+              <i class='bx bx-comment'></i>
+              <span>{{ estadisticas.comentarios }}</span>
+            </div>
+            
+            <div class="stat-item">
+              <i class='bx bx-show'></i>
+              <span>{{ estadisticas.vistas }}</span>
+            </div>
+          </div>
+
+          <div class="share-options">
+              <span>Compartir:</span>
+              <a href="https://www.facebook.com/sharer/sharer.php?u=[http://127.0.0.1:5000/blog]" target="_blank" class="social-share" title="Compartir en Facebook"><i class='bx bxl-facebook'></i></a>
+              <a href="https://twitter.com/intent/tweet?url=[http://127.0.0.1:5000/blog]&text=[Blog educación -  Edumusica]" target="_blank" class="social-share" title="Compartir en Twitter"><i class='bx bxl-twitter'></i></a>
+              <a href="https://api.whatsapp.com/send?text=[http://127.0.0.1:5000/blog] [Blog educación -  Edumusica]" target="_blank" class="social-share" title="Compartir en WhatsApp"><i class='bx bxl-whatsapp'></i></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sección de comentarios -->
+      <section class="comments-section">
+        <h2 class="section-title">
+          <i class='bx bx-comment-dots'></i> Comentarios ({{ estadisticas.comentarios }})
+        </h2>
+
+        <!-- Formulario de comentario principal -->
+        <form method="POST" class="comment-form">
+          <div class="form-group">
+            <textarea name="comentario" rows="3" placeholder="Escribe tu comentario..." required></textarea>
+            <input type="hidden" name="parent_id" value="">
+          </div>
+          <button type="submit" class="btn-submit">
+            <i class='bx bx-send'></i> Publicar comentario
+          </button>
+        </form>
+
+        <!-- Lista de comentarios -->
+        <div class="comments-list">
+          {% for comentario in comentarios %}
+          <div class="comment {% if comentario.parent_id %}reply{% endif %}" id="comment-{{ comentario.id }}">
+            <div class="comment-header">
+              <div class="comment-author">
+                <div class="author-avatar">
+                  <i class='bx bx-user'></i>
+                </div>
+                <div class="author-info">
+                  <strong>{{ comentario.nombre }}</strong>
+                  <span class="comment-date">{{ comentario.fecha.strftime('%d/%m/%Y a las %H:%M') }}</span>
+                </div>
+              </div>
+              <button class="btn-reply" data-comment-id="{{ comentario.id }}">
+                <i class='bx bx-reply'></i> Responder
+              </button>
+            </div>
+            
+            <div class="comment-content">
+              <p>{{ comentario.comentario }}</p>
+            </div>
+
+           <div class="comment-actions">
+              {% if comentario.id_usuario == usuario_actual['id'] %}
+
+                <button class="btn-delete" data-comment-id="{{ comentario.id }}">Eliminar</button>
+              {% endif %}
+              <button class="btn-report" data-comment-id="{{ comentario.id }}">Denunciar</button>
+            </div>
+
+            <!-- Formulario de respuesta (oculto inicialmente) -->
+            <form method="POST" class="reply-form" data-comment-id="{{ comentario.id }}" style="display: none;">
+              <div class="form-group">
+                <textarea name="comentario" rows="2" placeholder="Escribe tu respuesta..." required></textarea>
+                <input type="hidden" name="parent_id" value="{{ comentario.id }}">
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn-cancel-reply">Cancelar</button>
+                <button type="submit" class="btn-submit-reply">Responder</button>
+              </div>
+            </form>
+
+            <!-- Respuestas a este comentario -->
+            {% if comentario.respuestas %}
+            <div class="comment-replies">
+              {% for respuesta in comentario.respuestas %}
+              <div class="comment reply" id="comment-{{ respuesta.id }}">
+                <div class="comment-header">
+                  <div class="comment-author">
+                    <div class="author-avatar">
+                      <i class='bx bx-user'></i>
+                    </div>
+                    <div class="author-info">
+                      <strong>{{ respuesta.nombre }}</strong>
+                      <span class="comment-date">{{ respuesta.fecha.strftime('%d/%m/%Y a las %H:%M') }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="comment-content">
+                  <p>{{ respuesta.comentario }}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+  </section>
+
+
+  <script>
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const commentId = btn.dataset.commentId;
+    if (confirm('¿Seguro que quieres eliminar este comentario?')) {
+      fetch(`/eliminar_comentario/${commentId}`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById(`comment-${commentId}`).remove();
+          } else {
+            alert(data.error || 'Error al eliminar');
+          }
+        });
+    }
+  });
+});
+
+document.querySelectorAll('.btn-report').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const commentId = btn.dataset.commentId;
+    // Puedes abrir un prompt para que el usuario ponga la razón
+    const razon = prompt('¿Por qué quieres denunciar este comentario?');
+    if (razon) {
+      fetch(`/denunciar_comentario/${commentId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `razon=${encodeURIComponent(razon)}`
+      }).then(res => res.json())
+        .then(data => {
+          if (data.success) alert('Comentario denunciado, gracias.');
+          else alert('Error al denunciar');
+        });
+    }
+  });
+});
+
+  </script>
+
+  <script>
+    const logoModoOscuro = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+    const logoModoClaro = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/blog_js.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>

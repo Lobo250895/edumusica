@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educación - EduMusica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+AU+VIC+Guides&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+      .home{
+        padding: 2rem;
+      }
+      .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        background-color: rgba(0, 0, 0, 0.4); 
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 1% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; 
+        max-width: 900px; 
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px; 
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      #visor-pdf {
+        width: 100%; 
+        height: 600px; 
+        border: none;
+      }
+
+       .btn-accion {
+        background-color: #650ef1;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-right: 5px;
+        display: inline-block;
+      }
+
+      .btn-accion:hover {
+        background-color: #8b05d9;
+      }
+      .external-link {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip-msg {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 110%; /* posición a la derecha del enlace */
+        transform: translateY(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        white-space: nowrap;
+        z-index: 1000;
+        box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+      }
+    </style>
+</head>
+<body>
+  {% include 'sidebar.html' %}
+    <section class="home">
+
+      <!-- Panel de notificaciones -->
+      <div id="main-content">
+        <!-- Incluir la plantilla de notificaciones -->
+        {% include 'notifications.html' %}
+      </div>
+      <img id="logo" src="{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}" alt="Logo EduMúsica" width="140" height="57" class="d-inline-block align-text-top">
+
+         <!-- Contenedor con Flex -->
+      <div class="educacion-wrapper">
+
+        <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+        </button>
+
+        <!-- Calendario a la izquierda -->
+        <div class="Calendario">
+          <div class="container_educacion">
+            <h2 class="titulo-efemerides">Efemérides Históricas</h2>
+            
+            <!-- Carrusel de meses redondos -->
+            <div class="meses-carrusel">
+              <div class="mes-circulo" data-month="JAN">
+                <span>ENE</span>
+              </div>
+              <div class="mes-circulo" data-month="FEB">
+                <span>FEB</span>
+              </div>
+              <div class="mes-circulo" data-month="MAR">
+                <span>MAR</span>
+              </div>
+              <div class="mes-circulo" data-month="APR">
+                <span>ABR</span>
+              </div>
+              <div class="mes-circulo" data-month="MAY">
+                <span>MAY</span>
+              </div>
+              <div class="mes-circulo" data-month="JUN">
+                <span>JUN</span>
+              </div>
+              <div class="mes-circulo" data-month="JUL">
+                <span>JUL</span>
+              </div>
+              <div class="mes-circulo" data-month="AUG">
+                <span>AGO</span>
+              </div>
+              <div class="mes-circulo" data-month="SEP">
+                <span>SEP</span>
+              </div>
+              <div class="mes-circulo" data-month="OCT">
+                <span>OCT</span>
+              </div>
+              <div class="mes-circulo" data-month="NOV">
+                <span>NOV</span>
+              </div>
+              <div class="mes-circulo" data-month="DEC">
+                <span>DIC</span>
+              </div>
+            </div>
+            
+            <div class="indicador-mes">
+              <span id="nombre-mes-seleccionado">Selecciona un mes para ver los sucesos</span>
+            </div>
+          </div>
+          
+          <!-- Modal para mostrar efemérides -->
+          <div class="modal-efemerides" id="modalEfemerides">
+            <div class="modal-contenido">
+              <span class="cerrar-modal">&times;</span>
+              <h3 id="titulo-mes-modal">Efemérides de Mayo</h3>
+              <div class="efemerides-content" id="efemerides-content">
+                <p>Cargando efemérides...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="servicios-compactos">
+          <h2>Servicios útiles</h2>
+          
+          <div class="servicios-grid-compacto">
+            <!-- Servicio 1 -->
+            <div class="servicio-mini" style="--color-servicio:#fc374e">
+              <div class="icono-mini">
+                <img src="{{ url_for('static', filename='img/lista-de-verificacion.png') }}" alt="Listado Oficial">
+              </div>
+            <div class="texto-mini">
+                <span class="titulo-mini">Listado Oficial</span>
+                <a href="https://abc.gob.ar/listado-oficial" 
+                  target="_blank"
+                  class="external-link"
+                  class="enlace-mini"
+                  onmouseenter="mostrarTooltip(this)"
+                  onmouseleave="ocultarTooltip(this)">
+                  Ver
+                  <span class="tooltip-msg">Se abrirá en otra pestaña. Para volver, hacé clic en la pestaña anterior.</span>
+                </a>
+              </div>
+
+            </div>
+            
+            <!-- Servicio 2 -->
+            <div class="servicio-mini" style="--color-servicio:#36aeb3">
+              <div class="icono-mini">
+                <img src="{{ url_for('static', filename='img/escuela.png') }}" alt="Régimen Académico">
+              </div>
+              <div class="texto-mini">
+                <span class="titulo-mini">Régimen Académico</span>
+                <a href="https://abc.gob.ar/secretarias/areas/subsecretaria-de-educacion/educacion-secundaria/educacion-secundaria/regimen-academico" 
+                  target="_blank"
+                  class="enlace-mini"
+                  class="external-link"
+                  onmouseenter="mostrarTooltip(this)"
+                  onmouseleave="ocultarTooltip(this)">
+                  Ver
+                  <span class="tooltip-msg">Se abrirá en otra pestaña. Para volver, hacé clic en la pestaña anterior.</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Servicio 3 -->
+            <div class="servicio-mini" style="--color-servicio:#162d59">
+              <div class="icono-mini">
+                <img src="{{ url_for('static', filename='img/nomina-de-sueldos.png') }}" alt="Mis Haberes">
+              </div>
+              <div class="texto-mini">
+                <span class="titulo-mini">Mis Haberes</span>
+                <a href="https://login.abc.gob.ar/nidp/idff/sso?id=ABC-Form&sid=0&option=credential&sid=0&target=https://menu.abc.gob.ar/" 
+                  target="_blank"
+                  class="enlace-mini"
+                  class="external-link"
+                  onmouseenter="mostrarTooltip(this)"
+                  onmouseleave="ocultarTooltip(this)">
+                  Ver
+                  <span class="tooltip-msg">Se abrirá en otra pestaña. Para volver, hacé clic en la pestaña anterior.</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Servicio 4 -->
+            <div class="servicio-mini" style="--color-servicio:#f15f0e">
+              <div class="icono-mini">
+                <img src="{{ url_for('static', filename='img/informe-medico.png') }}" alt="Mis Licencias">
+              </div>
+              <div class="texto-mini">
+                <span class="titulo-mini">Mis Licencias</span>
+                <a href="https://login.abc.gob.ar/nidp/idff/sso?id=ABC-Form&sid=0&option=credential&sid=0&target=https://menu.abc.gob.ar/"
+                target="_blank"
+                  class="enlace-mini"
+                  class="external-link"
+                  onmouseenter="mostrarTooltip(this)"
+                  onmouseleave="ocultarTooltip(this)">
+                  Ver
+                  <span class="tooltip-msg">Se abrirá en otra pestaña. Para volver, hacé clic en la pestaña anterior.</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="servicio-mini" style="--color-servicio:#4caf50">
+              <div class="icono-mini">
+                <img src="{{ url_for('static', filename='img/alfabeto.png') }}" alt="Abc">
+              </div>
+              <div class="texto-mini">
+                <span class="titulo-mini">Abc</span>
+                <a href="https://login.abc.gob.ar/nidp/idff/sso?id=ABC-Form&sid=0&option=credential&sid=0&target=https://menu.abc.gob.ar/"
+                  target="_blank"
+                  class="enlace-mini"
+                  class="external-link"
+                  onmouseenter="mostrarTooltip(this)"
+                  onmouseleave="ocultarTooltip(this)">
+                  Ver
+                  <span class="tooltip-msg">Se abrirá en otra pestaña. Para volver, hacé clic en la pestaña anterior.</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="servicio-mini" style="--color-servicio:#053d13">
+              <div class="icono-mini">
+                <img src="{{ url_for('static', filename='img/calendario.png') }}" alt="Calendario Escolar">
+              </div>
+              <div class="texto-mini">
+                <span class="titulo-mini">Calendario Escolar Docente</span>
+                <a href="#" onclick="verPDFModal('https://storage.googleapis.com/storage-edumusica/diseños/Calendario%20Escolar%202025%20Anexo%205.pdf')" class="enlace-mini">Ver</a>
+
+              </div>
+            </div>
+
+            <div class="servicio-mini" style="--color-servicio:#eb0ef1">
+              <div class="icono-mini">
+                  <img src="{{ url_for('static', filename='img/icon_jar.png') }}" alt="Manual">
+              </div>
+              <div class="texto-mini">
+                  <span class="titulo-mini">Manual de Procedimiento</span>
+                  <a href="#" onclick="verPDFModal('https://storage.googleapis.com/storage-edumusica/libros/mpi_secundaria.pdf')"class="enlace-mini">Ver</a>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diseños">
+          <h2>Recursos disponibles</h2>
+          <!-- Tabla de recursos -->
+          <table id="tablaRecursos" cellpadding="10" cellspacing="0" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Genero</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for recurso in recursos %}
+              <tr data-categoria="{{ recurso['categoria'] }}">
+                <td class="nombre">{{ recurso['nombre'] }}</td>
+                <td class="nombre">{{ recurso['categoria'] }}</td>
+                <td>
+                  <button class="btn-accion" onclick="verPDFModal('{{ recurso['url'] }}')">Ver</button>
+                  <a class="btn-accion" href="{{ recurso['url'] }}" download>Descargar</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <!-- Visor PDF -->
+          <div id="visor-modal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7);">
+            <div class="modal-content" style="position:relative; margin: 30px auto; background:#fff; padding: 10px; max-width: 900px; height: 90vh;">
+              <span class="close" onclick="cerrarModal()" style="cursor:pointer; position:absolute; top:5px; right:10px; font-size: 28px;">&times;</span>
+              <h3>Visor de recurso</h3>
+              <iframe id="visor-pdf" src="" width="100%" height="85%" style="border: 1px solid #ccc;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        {% include 'footer.html' %}
+      </section>
+    </section>
+
+    <script>
+      function mostrarTooltip(elemento) {
+        const tooltip = elemento.querySelector('.tooltip-msg');
+        tooltip.style.display = 'block';
+      }
+
+      function ocultarTooltip(elemento) {
+        const tooltip = elemento.querySelector('.tooltip-msg');
+        tooltip.style.display = 'none';
+      }
+    </script>
+
+    <script>
+      const logoModoOscuro = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+      const logoModoClaro = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sj_educacion.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>  
+</body>
+</html>

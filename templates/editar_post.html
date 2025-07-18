@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Post | EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_edit_post.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<style>
+    /* Estilos generales */
+.edit-post-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.edit-post-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.edit-post-header h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin: 15px 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.edit-post-header p {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    color: var(--primary-dark);
+    transform: translateX(-3px);
+}
+
+.btn-back i {
+    font-size: 1.2rem;
+}
+
+/* Formulario */
+.edit-post-form {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.required {
+    color: #e74c3c;
+    margin-left: 3px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+}
+
+.form-group textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+
+.character-counter {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 5px;
+}
+
+/* Imagen actual */
+.current-image-container {
+    margin-bottom: 25px;
+}
+
+.current-image-container h4 {
+    margin: 0 0 15px 0;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.current-image-preview {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.current-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.no-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg-light);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 30px;
+    color: var(--text-light);
+}
+
+.no-image i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.no-image p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Subida de nueva imagen */
+.new-image-upload h4 {
+    margin: 0 0 15px 0;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.upload-area {
+    margin-bottom: 15px;
+}
+
+.drop-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.drop-zone i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.drop-zone p {
+    margin: 5px 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.drop-zone span {
+    color: var(--text-lighter);
+    font-size: 0.8rem;
+}
+
+.drop-zone.dragover {
+    border-color: var(--primary-color);
+    background: rgba(74, 20, 140, 0.05);
+}
+
+.btn-select-image {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.btn-select-image:hover {
+    background: var(--primary-dark);
+}
+
+.image-preview {
+    display: none;
+    margin-top: 20px;
+}
+
+.preview-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-remove-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    border: none;
+    padding: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-remove-image:hover {
+    background: rgba(192, 57, 43, 0.9);
+}
+
+/* Botones de acción */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-save {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: var(--border-color);
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .edit-post-container {
+        padding: 20px 15px;
+    }
+    
+    .edit-post-form {
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .current-image-preview,
+    .preview-container {
+        max-width: 100%;
+    }
+}
+</style>
+
+</head>
+<body>
+    {% include 'sidebar.html' %}
+
+    <section class="home">
+        <div class="imagen_logo" id="logo-container">
+            <img id="logo" src="{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}" alt="Logo EduMúsica" width="140" height="57" class="d-inline-block align-text-top">
+        </div>
+
+        <div class="edit-post-container">
+            <div class="edit-post-header">
+                <a href="{{ url_for('blog') }}" class="btn-back">
+                    <i class='bx bx-arrow-back'></i> Volver al blog
+                </a>
+                <h1><i class='bx bx-edit-alt'></i> Editar Publicación</h1>
+                <p>Actualiza el contenido de tu publicación musical</p>
+            </div>
+
+            <form action="{{ url_for('editar_post', blog_id=blog.id) }}" method="POST" enctype="multipart/form-data" class="edit-post-form">
+                <div class="form-group">
+                    <label for="nombre">
+                        <i class='bx bx-text'></i> Título del Post
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" id="nombre" name="nombre" value="{{ blog.nombre }}" required 
+                           placeholder="Ej: Técnicas modernas de enseñanza musical">
+                </div>
+
+                <div class="form-group">
+                    <label for="contenido">
+                        <i class='bx bx-notepad'></i> Contenido
+                        <span class="required">*</span>
+                    </label>
+                    <textarea id="contenido" name="contenido" rows="8" required
+                              placeholder="Escribe aquí el contenido detallado de tu publicación...">{{ blog.contenido }}</textarea>
+                    <div class="character-counter" id="char-counter">0 caracteres</div>
+                </div>
+
+                <div class="form-group image-uploader">
+                    <label>
+                        <i class='bx bx-image'></i> Imagen destacada
+                    </label>
+                    
+                    <div class="current-image-container">
+                        <h4>Imagen actual:</h4>
+                        {% if blog.imagen %}
+                            <div class="current-image-preview">
+                                <img src="{{ blog.imagen }}" alt="{{ blog.nombre }}">
+                                <div class="image-overlay">
+                                    <span>Imagen actual</span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="no-image">
+                                <i class='bx bx-image-alt'></i>
+                                <p>No hay imagen actual</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="new-image-upload">
+                        <h4>Actualizar imagen (opcional):</h4>
+                        <div class="upload-area" id="upload-area">
+                            <input type="file" id="imagen" name="imagen" accept="image/*" hidden>
+                            <div class="drop-zone">
+                                <i class='bx bx-cloud-upload'></i>
+                                <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+                                <span>Formatos: JPG, PNG (Máx. 2MB)</span>
+                            </div>
+                            <button type="button" class="btn-select-image">Seleccionar Imagen</button>
+                        </div>
+                        <div class="image-preview" id="image-preview"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class='bx bx-save'></i> Guardar Cambios
+                    </button>
+                    <a href="{{ url_for('blog') }}" class="btn-cancel">
+                        <i class='bx bx-x'></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        // Cambiar logo según modo claro/oscuro
+        function cambiarLogoSegunModo() {
+            var logoImage = document.getElementById('logo');
+            if (document.body.classList.contains('dark-mode')) {
+                logoImage.src = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+            } else {
+                logoImage.src = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+            }
+        }
+        
+        window.onload = function () {
+            cambiarLogoSegunModo();
+        };
+
+        // Contador de caracteres
+        const textarea = document.getElementById('contenido');
+        const charCounter = document.getElementById('char-counter');
+        
+        textarea.addEventListener('input', function() {
+            charCounter.textContent = this.value.length + ' caracteres';
+        });
+        
+        // Inicializar contador
+        charCounter.textContent = textarea.value.length + ' caracteres';
+
+        // Upload de imagen
+        const dropZone = document.querySelector('.drop-zone');
+        const fileInput = document.getElementById('imagen');
+        const selectImageBtn = document.querySelector('.btn-select-image');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadArea = document.getElementById('upload-area');
+        
+        selectImageBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        // Drag and drop
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', function() {
+            this.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+        
+        function handleFiles(files) {
+            const file = files[0];
+            if (!file.type.match('image.*')) {
+                alert('Por favor, selecciona un archivo de imagen (JPG, PNG)');
+                return;
+            }
+            
+            if (file.size > 2 * 1024 * 1024) {
+                alert('La imagen debe ser menor a 2MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.innerHTML = '';
+                uploadArea.style.display = 'none';
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'btn-remove-image';
+                removeBtn.innerHTML = '<i class="bx bx-trash"></i> Eliminar';
+                removeBtn.addEventListener('click', function() {
+                    imagePreview.innerHTML = '';
+                    uploadArea.style.display = 'block';
+                    fileInput.value = '';
+                });
+                
+                const previewContainer = document.createElement('div');
+                previewContainer.className = 'preview-container';
+                previewContainer.appendChild(img);
+                previewContainer.appendChild(removeBtn);
+                
+                imagePreview.appendChild(previewContainer);
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+  <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Nuevo Recurso</h1>
+                </div>
+                <h1>Recursos Educativos</h1>
+                <table>
+                  <tr><th>Nombre</th><th>Categoria</th><th>fecha_subida</th><th>Acciones</th></tr>
+                  {% for recurso in recursos %}
+                  <tr>
+                    <td>{{ recurso.nombre }}</td>
+                    <td>{{ recurso.categoria }}</td>
+                    <td>{{ recurso.fecha_subida }}</td>
+                    <td><a href="/editar_recurso/{{ recurso.id }}" class="btn btn-success">Editar</a> | <a href="/eliminar_recurso/{{ recurso.id }}" class="btn btn-danger">Eliminar</a></td>
+                  </tr>
+                  {% endfor %}
+                </table>
+                <a href="/nuevo_recurso" class="btn btn-primary">Agregar Recurso</a>
+            </div>
+        </main>
+  </div>  
+</body>
+</html>

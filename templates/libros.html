@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material de Trabajo - EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilos_libros.css') }}">
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_area_trabajo.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+  {% include 'sidebar.html' %}
+<section class="home">
+    <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+    </div>
+
+  <section class="welcome-section">
+    <h1>Comienza a explorar el area de trabajo</h1>
+
+        <!-- Panel de notificaciones -->
+        <div id="main-content">
+          <!-- Incluir la plantilla de notificaciones -->
+          {% include 'notifications.html' %}
+        </div>   
+        
+    <div class="carousel-container">
+        <div class="carousel" id="carruselTexto">
+            Cargando texto...
+        </div>
+        <div class="carousel-controls">
+            <button class="carousel-btn" id="btnAnterior">Anterior</button>
+            <button class="carousel-btn" id="btnSiguiente">Siguiente</button>
+        </div>
+        <div class="carousel-indicators" id="indicadores">
+            
+        </div>
+    </div>
+
+    <div class="tabs-container">
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab(0)">
+                <i class="fas fa-globe"></i> Links Web
+            </button>
+            <button class="tab-button" onclick="showTab(1)">
+                <i class="fas fa-film"></i> Películas
+            </button>
+            <button class="tab-button" onclick="showTab(2)">
+                <i class="fas fa-book"></i> Libros
+            </button>
+        </div>
+
+        <!-- TAB 0: LINKS WEB -->
+        <div id="tab-0" class="content {% if categoria_actual == 'web' %}active{% endif %}">
+            <table class="resources-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Enlace</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recurso in recursos_web %}
+                    <tr>
+                        <td>{{ recurso.nombre }}</td>
+                        <td>
+                            <a href="{{ 'https://' + recurso.url if not recurso.url.startswith('http') else recurso.url }}"
+                                target="_blank"
+                                class="external-link"
+                                onmouseenter="mostrarTooltip(this)"
+                                onmouseleave="ocultarTooltip(this)">
+                                {{ recurso.url }}
+                                <span class="tooltip-msg">Se abrirá en otra pestaña. Para volver, hacé clic en la pestaña anterior.</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if total_paginas > 1 %}
+            <div class="pagination">
+                {% for p in range(1, total_paginas + 1) %}
+                <a href="{{ url_for('recursos') }}?pagina={{ p }}" class="{% if p == pagina_actual %}active{% endif %}">
+                    {{ p }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- TAB 1: PELÍCULAS -->
+        <div id="tab-1" class="content {% if categoria_actual == 'peliculas' %}active{% endif %}">
+            <table class="resources-table">
+                <thead>
+                    <tr>
+                        <th>Película</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recurso in recursos_peliculas %}
+                    <tr>
+                        <td>{{ recurso.nombre }}</td>
+                        <td>
+                           <button onclick="openVideoModal('{{ recurso.url }}', '{{ recurso.nombre }}')">
+                                Ver video
+                            </button>
+                        </td>
+                        
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TAB 2: LIBROS -->
+        <div id="tab-2" class="content {% if categoria_actual == 'libros' %}active{% endif %}">
+            <table class="resources-table">
+                <thead>
+                    <tr>
+                        <th>Libros y Actividades</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for libro in recursos_libros %}
+                    <tr>
+                        <td>
+                            {{ libro.nombre }}
+                            {% if libro.nombre|lower == 'cajita de musica argentina' %}
+                            <a href="{{ url_for('reproductor', genero='cajita_musica') }}" class="btn-ir-cd">
+                                <i class="fas fa-compact-disc"></i> Ir al CD
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn-ver-libro" onclick="openPdfModal('{{ libro.url }}', '{{ libro.nombre }}')">
+                                <i class="fas fa-file-pdf"></i> Ver PDF
+                            </button>
+                        </td>    
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+            <!-- Modal para videos -->
+        <div id="videoModal" class="modal">
+            <div class="modal-content" style="width: 80%; max-width: 800px;">
+                <span class="close-modal" onclick="closeVideoModal()">&times;</span>
+                <div class="modal-header">
+                    <h2 id="videoModalTitle">Reproduciendo Video</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="video-container">
+                        <iframe id="videoFrame" width="100%" height="450" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para PDFs -->
+        <div id="pdfModal" class="modal">
+            <div class="modal-content" style="width: 90%; max-width: 900px; height: 90%;">
+                <span class="close-modal" onclick="closePdfModal()">&times;</span>
+                <div class="modal-header">
+                    <h2 id="pdfModalTitle">Visualizando PDF</h2>
+                </div>
+                <div class="modal-body" style="height: calc(100% - 120px);">
+                    <iframe id="pdfFrame" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+
+      <div class="contenedor-principal">
+        <div class="informacion_util">
+            <div class="cards-container">
+              <div class="card_info">
+                  <div class="card-header_info">Canal Encuentro - Videos y descargas</div>
+                  <div class="card-body_info">
+                      <p class="card-text">
+                          Calibroscopio en un segmento del programa Pakapaka en el que actores
+                          leen un cuento en voz alta. Se pueden ver los capítulos en el siguiente
+                          <a href="https://youtube.com/playlist?list=PLVvU5Pgeah5x86Jj02xudLn5Noko9MIQO&feature=shared" target="_blank">enlace</a>.
+                          Se recomienda reproducir la última parte del programa que incluye la lectura del cuento.
+                      </p>
+                  </div>
+              </div>
+      
+              <div class="card_info">
+                  <div class="card-header_info">Laboratorio Sonoro</div>
+                  <div class="card-body_info">
+                      <h5 class="card-title_info">
+                          <a href="https://www.laboratoriosonoro.es/" target="_blank">
+                              https://www.laboratoriosonoro.es/
+                          </a>
+                      </h5>
+                      <p class="card-text">
+                          Una iniciativa de docentes de escuela media en España. Un excelente ejemplo de 
+                          las actividades para hablar, leer y escuchar que se pueden hacer con los alumnos de secundaria.
+                      </p>
+                  </div>
+              </div>
+              <div class="card_info">
+                <div class="card-header_info">Atlas de la diversidad cultural</div>
+                <div class="card-body_info">
+                    <h5 class="card-title_info">
+                      <a href="https://www.cepal.org/es/publicaciones/3990-atlas-la-diversidad-cultural-experiencia-aprendizaje-cooperativo-colaborativo" target="_blank">
+                          https://www.www.atlasdeladiversidad.net/
+                      </a>
+                    </h5>
+                    <p class="card-text">
+                        Es una herramienta pedagogica. Se compone de una red de escuelas 
+                        que gracias la colaboracion mutua ha generado una de las bases 
+                        de datos sobre la dibersidad cultural mas importantes y extensas del mundo.
+                        Un espacio en el que se pretende recoger las particularidades propias de cada lugar
+                        partir del criterio y la vision subjetiva de los participantes. 
+                    </p>
+                </div>
+              </div>
+      
+              <div class="card_info">
+                  <div class="card-header_info">Wolfram Alpha</div>
+                  <div class="card-body_info">
+                      <h5 class="card-title_info">
+                          <a href="https://www.wolframalpha.com/" target="_blank">
+                              https://www.wolframalpha.com/
+                          </a>
+                      </h5>
+                      <p class="card-text">
+                          Un buscador de respuestas, ¡digno de experimentar! No devuelve 
+                          sitios web donde aparece la palabra clave, sino que devuelve la 
+                          respuesta frente a una pregunta concreta.Es una base de datos inteligente 
+                          que le muyestra al usuario mas datos relevantes de los que se podrian haber 
+                          imaginado al empezar a darle uso a este motor de busqueda.
+  
+                      </p>
+                  </div>
+              </div>
+
+              
+            
+            </div>
+        </div>
+  
+        <div class="adjuntar-container">
+          <div class="container_update">
+              <h4>Adjuntar archivos para que el sistema este mas completo</h4>
+              
+              <!-- Mensajes Flash -->
+              {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                      <div class="flash-messages">
+                          {% for category, message in messages %}
+                              <div class="alert alert-{{ category }}">
+                                  {{ message }}
+                              </div>
+                          {% endfor %}
+                      </div>
+                  {% endif %}
+              {% endwith %}
+              
+              <!-- Formulario Actualizado -->
+              <form action="{{ url_for('libros') }}" method="POST" enctype="multipart/form-data" class="form-grid" id="uploadForm">
+                  <!-- Campo Nombre -->
+                  <div class="form-group">
+                      <label for="nombre">Nombre del recurso</label>
+                      <input type="text" id="nombre" name="nombre" required 
+                             placeholder="Ej: Teoría Musical Básica" class="form-control">
+                  </div>
+                  
+                  <!-- Selector de Categoría -->
+                  <div class="form-group">
+                      <label for="categoria">Categoría</label>
+                      <select id="categoria" name="categoria" class="form-control" required>
+                          <option value="">Seleccione una categoría</option>
+                          <option value="libros">Libro/PDF</option>
+                          <option value="peliculas">Película/Video</option>
+                          <option value="web">Link Web</option>
+                      </select>
+                  </div>
+                  
+                  <!-- Campo URL (solo visible para categoría web) -->
+                  <div class="form-group" id="urlField" style="display: none;">
+                      <label for="url">URL del recurso</label>
+                      <input type="url" id="url" name="url" 
+                             placeholder="https://ejemplo.com" class="form-control">
+                  </div>
+                  
+                  <!-- Campo Archivo (no visible para categoría web) -->
+                  <div class="form-group full-width" id="fileField">
+                      <label for="file" class="file-label" id="fileDropArea">
+                          <div class="upload-area">
+                              <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                              <p id="file-info">Arrastra tu archivo aquí</p>
+                              <span class="file-requirements">Formatos aceptados: PDF, DOCX, MP4, JPG, PNG</span>
+                              <input type="file" id="file" name="file" 
+                                     accept=".docx, .pdf, .jpg, .jpeg, .png, .mp4" 
+                                     class="file-input">
+                          </div>
+                      </label>
+                  </div> 
+                  <!-- Botón de Submit -->
+                  <div class="form-group full-width">
+                      <button type="submit" class="submit-btn">
+                          <i class="fas fa-upload"></i> Subir Recurso
+                      </button>
+                  </div>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actividad-musical">
+        <h2>Adivina el instrumento 🎧</h2>
+        <p>Escuchá el fragmento y seleccioná qué instrumento está sonando.</p>
+
+        <audio id="audioInstrumento" controls>
+            Tu navegador no soporta audio.
+        </audio>
+
+        <div class="opciones" id="opcionesRespuestas"></div>
+
+        <p id="resultado" style="font-weight: bold; margin-top: 10px;"></p>
+        <p id="puntaje" style="margin-top: 10px;">Puntaje: 0</p>
+
+        <button onclick="reiniciarJuego()">🔄 Reiniciar</button>
+    </div>
+
+
+  </section>
+  {% include 'footer.html' %}
+</section>
+
+<script>
+const logoModoOscuro = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+const logoModoClaro = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+</script>
+<script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/areaTrabajo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+
+</body>
+</html>

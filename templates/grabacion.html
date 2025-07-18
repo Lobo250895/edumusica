@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_grabador.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Grabador de Voz - Edumusica</title>
+</head>
+<body>
+
+    {% include 'sidebar.html' %}
+
+    <div class="logo-container">
+        <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+        <button onclick="location.href='/principal'" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+        </button>
+    </div>
+
+<h1>Grabador de Audio WolfTom Record</h1>
+<p>Administra tus grabaciones de voz</p>
+
+<div id="controls">
+  <input type="hidden" id="id_usuario" value="{{ id_usuario }}">
+  <button id="btnRecord">Grabar</button>
+  <button id="btnStop" disabled>Detener</button>
+  <button id="btnPlay" disabled>Reproducir</button>
+  <button id="btnGuardar" disabled>Guardar</button>
+  <button id="btnOpen">Abrir Archivo</button>
+  <input type="file" id="fileInput" accept="audio/*" style="display:none" />
+</div>
+
+<div id="volumeControl">
+  <label for="volumeSlider">Volumen Mic:</label>
+  <input type="range" id="volumeSlider" min="0" max="300" value="150" />
+  <span id="volumeValue">150%</span>
+</div>
+
+<div id="status">Listo</div>
+
+<canvas id="waveform"></canvas>
+
+<h3>Audio cargado:</h3>
+  <canvas id="waveform-cargado"></canvas>
+
+<h2>Grabaciones guardadas:</h2>
+<ul id="grabaciones-list">
+  {% for grabacion in grabaciones %}
+    <li>{{ grabacion.nombre }}</li>
+    <form action="/eliminar_grabacion/{{ grabacion.id }}" method="POST" style="display:inline">
+        <button type="submit">Eliminar</button>
+    </form>
+  {% endfor %}
+</ul>
+
+<script>
+    window.IMG_BASE_PATH = "{{ url_for('static', filename='img/') }}";
+    window.LOGO_DARK = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+    window.LOGO_LIGHT = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+    window.LOGO_DEFAULT = "{{ url_for('static', filename='img/logo-default.png') }}";
+</script>
+<script src="{{ url_for('static', filename='js/js_grabador.js') }}"></script>
+<script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>

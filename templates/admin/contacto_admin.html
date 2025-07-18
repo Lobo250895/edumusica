@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes de los usuarios Admin - Edumúsica</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+        <main class="main-content">
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h2 class="page-title">📬 Mensajes de Contacto</h2>
+                    {% if mensajes %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Asunto</th>
+                                        <th>Mensaje</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for msg in mensajes %}
+                                    <tr>
+                                        <td>{{ msg.nombre }}</td>
+                                        <td>{{ msg.email }}</td>
+                                        <td>{{ msg.asunto }}</td>
+                                        <td>{{ msg.mensaje }}</td>
+                                        <td>{{ msg.fecha_envio.strftime('%Y-%m-%d %H:%M') }}</td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No hay mensajes aún.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+                <tbody>
+                    {% for msg in mensajes %}
+                    <tr>
+                        <td>{{ msg.nombre }}</td>
+                        <td>{{ msg.email }}</td>
+                        <td>{{ msg.asunto }}</td>
+                        <td>{{ msg.mensaje }}</td>
+                        <td>{{ msg.fecha_envio.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if msg.respondido %}
+                                <span class="badge bg-success">Respondido</span>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('responder_contacto', id_contacto=msg.id) }}">
+                                    <button class="btn btn-sm btn-outline-primary">Marcar como respondido</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilos_ayuda.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Centro de Ayuda | EduMúsica</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-glass">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}" alt="Logo EduMúsica" width="80" height="40" class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="mx-auto"> 
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('principal') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('ayuda') }}">Ayuda</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-overlay">
+        <div class="container help-container">
+            <div class="help-header text-center mb-5">
+                <h1 class="display-4 fw-bold">Centro de Ayuda</h1>
+                <p class="lead">Encuentra respuestas a tus preguntas o contacta con nuestro equipo de soporte</p>
+            </div>
+            
+            
+            <!-- Sección de categorías -->
+            <div class="categories mb-5">
+                <h3 class="section-title mb-4">Explora por categorías</h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="category-card">
+                            <i class='bx bx-user'></i>
+                            <h5>Cuenta</h5>
+                            <p>Configuración y gestión de tu perfil</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="category-card">
+                            <i class='bx bx-lock-alt'></i>
+                            <h5>Seguridad</h5>
+                            <p>Contraseñas y privacidad</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="category-card">
+                            <i class='bx bx-book'></i>
+                            <h5>Contenido</h5>
+                            <p>Acceso y uso de materiales</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="category-card">
+                            <i class='bx bx-credit-card'></i>
+                            <h5>Pagos</h5>
+                            <p>Suscripciones y facturación</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Preguntas frecuentes -->
+            <div class="faq-section">
+                <h3 class="section-title mb-4">Preguntas Frecuentes</h3>
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                <i class='bx bx-question-mark me-2'></i> ¿Cómo puedo crear una cuenta?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show">
+                            <div class="accordion-body">
+                                <p>Para crear una cuenta en EduMúsica:</p>
+                                <ol>
+                                    <li>Haz clic en "Registro" en el menú superior</li>
+                                    <li>Completa el formulario con tus datos personales</li>
+                                    <li>Verifica tu correo electrónico con el enlace que te enviaremos</li>
+                                    <li>¡Listo! Ya puedes acceder a todos nuestros recursos</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                <i class='bx bx-key me-2'></i> ¿Cómo recuperar mi contraseña?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <p>Si olvidaste tu contraseña, sigue estos pasos:</p>
+                                <ol>
+                                    <li>Ve a la página de inicio de sesión</li>
+                                    <li>Haz clic en "¿Olvidaste tu contraseña?"</li>
+                                    <li>Ingresa tu correo electrónico registrado</li>
+                                    <li>Sigue las instrucciones en el correo que recibirás</li>
+                                    <li>Crea una nueva contraseña segura</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                <i class='bx bx-envelope me-2'></i> ¿Cómo cambiar mi correo electrónico?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <p>Para actualizar tu correo electrónico:</p>
+                                <ol>
+                                    <li>Inicia sesión en tu cuenta</li>
+                                    <li>Ve a "Configuración de cuenta"</li>
+                                    <li>Haz clic en "Editar perfil"</li>
+                                    <li>Actualiza tu dirección de correo electrónico</li>
+                                    <li>Confirma el cambio con el código que te enviaremos</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                                <i class='bx bx-trash me-2'></i> ¿Cómo eliminar mi cuenta?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <p>Si deseas eliminar tu cuenta permanentemente:</p>
+                                <ol>
+                                    <li>Accede a "Editar perfil"</li>
+                                    <li>Desplázate hasta la sección "Eliminar cuenta"</li>
+                                    <li>Confirma que deseas eliminar tu cuenta</li>
+                                    <li>Ten en cuenta que esta acción no se puede deshacer</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contacto de soporte -->
+            <div class="support-section mt-5 pt-4">
+                <div class="support-card">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4>¿No encontraste lo que buscabas?</h4>
+                            <p>Nuestro equipo de soporte está disponible para ayudarte con cualquier pregunta o problema que tengas.</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <a href="{{ url_for('contacto') }}" class="btn btn-outline-light">Contactar Soporte</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>

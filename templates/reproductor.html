@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor - EduMúsica</title>
+    <!-- Estilos locales -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_reproductor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_reproductor_responsive.css') }}">
+    
+    <!-- Boxicons y Font Awesome -->
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Fuentes de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    {% include 'sidebar.html' %}
+    
+    <section class="home">
+       <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/musica'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver a Música
+            </button>
+        </div>
+        
+        <!-- Panel de notificaciones -->
+        <div id="main-content">
+            {% include 'notifications.html' %}
+        </div>
+        
+        <!-- Biblioteca -->
+        <div class="biblioteca">
+            <div class="avatar-container">
+                <h2>Mi música</h2>
+            </div> 
+            
+            <div>
+                <h4>Reproductor de Música - Género seleccionado: {{ genero }}</h4>
+                {% if canciones %}
+                    {% for cancion in canciones %}
+                        <div class="track" data-file="{{ cancion['ruta_archivo'] }}" data-title="{{ cancion['titulo'] }}" data-artist="{{ cancion['artista'] }}">
+                            <div class="track-info">
+                                <span class="track-icon">♪</span>
+                                <div>
+                                    <p class="track-title">{{ cancion['titulo'] }}</p>
+                                    <p class="track-artist">{{ cancion['artista'] }}</p>
+                                </div>
+                            </div>
+                            <div class="track-actions">
+                                <button class="play-button" 
+                                        data-file="{{ cancion['ruta_archivo'] }}" 
+                                        data-title="{{ cancion['titulo'] }}" 
+                                        data-artist="{{ cancion['artista'] }}">
+                                    Reproducir
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-songs">No hay canciones disponibles en este género.</p>
+                {% endif %}
+
+            </div>  
+        </div>
+
+        <div class="formulario_musica">
+            <h3>Sube la música que quieras compartir:</h3>
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('adjuntar_musica') }}">
+                <label for="titulo">Título:</label>
+                <input type="text" name="titulo" required>
+
+                <label for="artista">Artista:</label>
+                <input type="text" name="artista">
+
+                <label for="album">Álbum:</label>
+                <input type="text" name="album">
+
+                <label for="categoria">Categoría:</label>
+                <select name="categoria" id="categoria">
+                    <option value="">Seleccione una categoría</option>
+                    <option value="folklore">Folklore</option>
+                    <option value="patria">Música Patria</option>
+                    <option value="actos">Actos Escolares</option>
+                    <option value="funk">Funk</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="malvinas">Malvinas</option>
+                    <option value="rock">Rock Nacional</option>
+                    <option value="pelicula">Sonidos de Películas</option>
+                    <option value="entorno">Sonidos de Entorno</option>
+                    <option value="clasica">Música Clásica</option>
+                    <option value="tango">Tango</option>
+                    <option value="cajita_de_musica">Cajita de Música</option>
+                    <option value="pop">Música Pop</option>
+                    <option value="latina">Música Latina</option>
+                    <option value="rockandroll">Rock and Roll</option>
+                    <option value="urbana">Música Urbana</option>
+                    <option value="compartido">Canciones Compartidas</option>
+                    
+                </select>
+
+                <label for="archivo">Archivo de música:</label>
+                <input type="file" name="archivo" accept="audio/*" required style="display: block; background: #fff; border: 1px solid red;">
+
+
+                <button type="submit">Guardar Canción</button>
+            </form>
+            <hr>
+            
+
+        </div>
+
+
+        <!-- Reproductor de música con visualización de onda -->
+        <div id="spotify-player" class="spotify-player">
+            <div class="player-left">
+                <img id="player-album-cover" src="{{ url_for('static', filename='uploads/discos_imagenes/gifs-animados-lobos.gif') }}" alt="Portada del álbum" />
+                <div class="player-song-info">
+                    <p id="player-song-title">Selecciona una canción</p>
+                    <p id="player-song-artist">Artista</p>
+                </div>
+            </div>
+            
+            <div class="player-center">
+                <div class="player-controls">
+                    <button id="prev-button" title="Anterior"><i class="fas fa-step-backward"></i></button>
+                    <button id="play-pause-button" title="Reproducir/Pausar"><i class="fas fa-play"></i></button>
+                    <button id="next-button" title="Siguiente"><i class="fas fa-step-forward"></i></button>
+                </div>
+                
+                <div class="player-progress">
+                    <span id="current-time">0:00</span>
+                    <input id="progress-bar" type="range" min="0" max="100" value="0">
+                    <span id="duration">0:00</span>
+                </div>              
+            </div>
+            
+            <audio id="audio-element"></audio>
+        </div>
+
+        <script src="https://unpkg.com/wavesurfer.js@7"></script>
+
+        <!-- Footer -->
+        {% include 'footer.html' %}
+    </section>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script_reproductor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/inspiracion_js.js') }}"></script>
+</body>
+</html>

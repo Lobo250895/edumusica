@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Nueva Música</h1>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    <label for="titulo">Título:</label>
+                    <input type="text" name="titulo" required>
+
+                    <label for="artista">Artista:</label>
+                    <input type="text" name="artista">
+
+                    <label for="album">Álbum:</label>
+                    <input type="text" name="album">
+
+                    <label for="categoria">Categoría:</label>
+                    <input type="text" name="categoria">
+
+                    <label for="archivo">Archivo de música:</label>
+                    <input type="file" name="archivo" accept="audio/*" required>
+
+                    <button type="submit" class="btn btn-primary">Guardar Canción</button>
+                </form>
+                
+            </div>
+        </main>
+    </div>
+</body>
+</html>

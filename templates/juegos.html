@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juegos | EduMusica</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilos_juegos.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1/es6/core.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1/es6/music_rnn.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm px-4 py-3">
+        <div class="container-fluid">
+                <div class="imagen_logo" id="logo-container">
+                  <img id="logo" src="{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}" alt="Logo EduMúsica" width="100" height="57" class="d-inline-block align-text-top">
+                </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/principal"><i class="fas fa-home me-1"></i> Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/juegos"><i class="fas fa-gamepad me-1"></i> Juegos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/guitarra"><i class="fas fa-guitar me-1"></i> Afinador</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span class="d-none d-sm-inline">{{ profesor.nombre }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/editar_perfil"><i class="fas fa-user-cog me-1"></i> Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+  <!-- Contenido principal -->
+  <main class="container my-5">
+    <!-- Encabezado -->
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold text-primary mb-3"><i class="fas fa-piano-keyboard me-2"></i> Piano Virtual</h1>
+      <p class="lead text-muted">Herramienta interactiva para la enseñanza musical</p>
+    </div>
+
+    <!-- Sección del piano -->
+    <section class="card shadow-lg mb-5">
+      <div class="card-header bg-white py-3">
+        <h2 class="h5 mb-0 fw-bold"><i class="fas fa-keyboard me-2"></i>Teclado interactivo</h2>
+      </div>
+      <div class="card-body p-4">
+        <div class="piano-container">
+          <div class="piano" id="piano"></div>
+          
+          <div class="controls mt-4">
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+              <button id="generarBtn" class="btn btn-primary btn-lg" onclick="generarMelodia()">
+                <i class="fas fa-magic me-2"></i>Generar Melodía
+              </button>
+              <button id="detenerBtn" class="btn btn-outline-secondary btn-lg" onclick="detenerMelodia()" disabled>
+                <i class="fas fa-stop me-2"></i>Detener
+              </button>
+              <button id="grabarBtn" class="btn btn-danger btn-lg" onclick="iniciarGrabacion()">
+                <i class="fas fa-circle me-2"></i>Grabar
+              </button>
+              <button id="detenerGrabacionBtn" class="btn btn-outline-danger btn-lg" onclick="detenerGrabacion()" disabled>
+                <i class="fas fa-stop-circle me-2"></i>Detener
+              </button>
+              <button id="guardarBtn" class="btn btn-success btn-lg" onclick="guardarMelodia()" disabled>
+                <i class="fas fa-save me-2"></i>Guardar
+              </button>
+              <button class="btn btn-info btn-lg" onclick="exportarMIDI()">
+                <i class="fas fa-file-export me-2"></i>Exportar MIDI
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de visualización -->
+    <div class="row">
+      <div class="col-lg-8">
+        <section class="card shadow mb-4">
+          <div class="card-header bg-white py-3">
+            <h3 class="h5 mb-0 fw-bold"><i class="fas fa-music me-2"></i>Visualizador de notas</h3>
+          </div>
+          <div class="card-body">
+            <div id="visualizador">
+              <div id="notas" class="d-flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      
+      <div class="col-lg-4">
+        <section class="card shadow">
+          <div class="card-header bg-white py-3">
+            <h3 class="h5 mb-0 fw-bold"><i class="fas fa-info-circle me-2"></i>Instrucciones</h3>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info">
+              <h4 class="alert-heading h6"><i class="fas fa-lightbulb me-2"></i>¿Cómo usar?</h4>
+              <ul class="mb-0">
+                <li>Haz clic en las teclas para tocar notas</li>
+                <li>Presiona "Grabar" para capturar tu interpretación</li>
+                <li>Genera melodías automáticas con IA</li>
+                <li>Guarda o exporta tus creaciones</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Juego de secuencias -->
+    <section class="card shadow-lg mt-5">
+      <div class="card-header bg-white py-3">
+        <h2 class="h5 mb-0 fw-bold"><i class="fas fa-gamepad me-2"></i>Juego de Memoria Musical</h2>
+      </div>
+      <div class="card-body">
+        <div class="juego-container text-center">
+          <p class="lead mb-4">Repite la secuencia de notas para ganar puntos</p>
+          
+          <div class="game-info mb-4">
+            <div class="d-inline-block bg-light rounded-pill px-4 py-2 shadow-sm">
+              <span class="badge bg-primary me-3">Puntaje: <span id="score" class="fw-normal">0</span></span>
+              <span class="badge bg-success">Nivel: <span id="level" class="fw-normal">1</span></span>
+            </div>
+          </div>
+          
+          <div id="piano_juego" class="d-flex justify-content-center mb-4">
+            <div class="key_juego" data-note="C"><span>C</span></div>
+            <div class="key_juego" data-note="D"><span>D</span></div>
+            <div class="key_juego" data-note="E"><span>E</span></div>
+            <div class="key_juego" data-note="F"><span>F</span></div>
+            <div class="key_juego" data-note="G"><span>G</span></div>
+            <div class="key_juego" data-note="A"><span>A</span></div>
+            <div class="key_juego" data-note="B"><span>B</span></div>
+          </div>
+          
+          <button id="startBtn" class="btn btn-primary btn-lg px-4">
+            <i class="fas fa-play me-2"></i>Iniciar Juego
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card shadow-lg mt-5">
+      <div class="card-header bg-white py-3">
+        <h2 class="h5 mb-0 fw-bold"><i class="fas fa-gamepad me-2"></i>Sube tus juegos para compartir con otros profesores</h2>
+      </div>
+      <div class="card-body">
+        <div>
+         <p></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+
+  {% include 'footer.html' %}
+
+  <!-- Elementos de audio -->
+  <audio id="audio-C" src="/static/sounds_piano/DO4.mp3"></audio>
+  <audio id="audio-D" src="/static/sounds_piano/RE4.mp3"></audio>
+  <audio id="audio-E" src="/static/sounds_piano/MI4.mp3"></audio>
+  <audio id="audio-F" src="/static/sounds_piano/FA4.mp3"></audio>
+  <audio id="audio-G" src="/static/sounds_piano/SOL4.mp3"></audio>
+  <audio id="audio-A" src="/static/sounds_piano/LA4.mp3"></audio>
+  <audio id="audio-B" src="/static/sounds_piano/SI4.mp3"></audio>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      inicializarPiano();
+    });
+
+    const pianoContainer = document.getElementById("piano");
+    const notasContainer = document.getElementById("notas");
+    const detenerBtn = document.getElementById("detenerBtn");
+    const detenerGrabacionBtn = document.getElementById("detenerGrabacionBtn");
+    const guardarBtn = document.getElementById("guardarBtn");
+
+    let grabacion = [];
+    let grabando = false;
+    let inicioGrabacion = null;
+    let player = null;
+    let rnn = null;
+    let synth = null;
+
+    // Inicializar el piano
+    function inicializarPiano() {
+      // Notas musicales (blancas y negras)
+      const notasBlancas = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
+      const notasNegras = ["C#4", "D#4", "F#4", "G#4", "A#4"];
+      const posicionesNegras = [0.7, 1.7, 3.7, 4.7, 5.7]; // Posiciones relativas
+
+      // Crear teclas blancas
+      notasBlancas.forEach((nota, i) => {
+        const key = document.createElement("div");
+        key.className = "key";
+        key.dataset.note = nota;
+        key.innerHTML = `<span>${nota.replace(/[0-9]/g, '')}</span>`;
+        key.onmousedown = () => tocarNota(nota);
+        key.onmouseup = () => detenerNota(nota);
+        key.onmouseleave = () => detenerNota(nota);
+        pianoContainer.appendChild(key);
+      });
+
+      // Crear teclas negras
+      notasNegras.forEach((nota, i) => {
+        const key = document.createElement("div");
+        key.className = "key black-key";
+        key.dataset.note = nota;
+        key.innerHTML = `<span>${nota.replace(/[0-9]/g, '')}</span>`;
+        key.style.left = `${posicionesNegras[i] * 62}px`;
+        key.onmousedown = () => tocarNota(nota);
+        key.onmouseup = () => detenerNota(nota);
+        key.onmouseleave = () => detenerNota(nota);
+        pianoContainer.appendChild(key);
+      });
+
+      // Inicializar Tone.js
+      synth = new Tone.PolySynth(Tone.Synth).toDestination();
+      synth.volume.value = -8;
+
+      // Inicializar Magenta.js
+      rnn = new mm.MusicRNN(
+        "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
+      );
+      rnn.initialize();
+
+      player = new mm.Player();
+      mm.Player.tone = Tone;
+    }
+
+    // Función para tocar una nota
+    function tocarNota(nota) {
+      synth.triggerAttack(nota);
+      
+      // Resaltar tecla
+      const keys = document.querySelectorAll(`.key[data-note="${nota}"]`);
+      keys.forEach(key => key.classList.add('active'));
+      
+      // Mostrar nota en el visualizador
+      mostrarNota(nota);
+      
+      // Si está grabando, registrar la nota
+      if (grabando) {
+        const tiempo = Tone.now() - inicioGrabacion;
+        grabacion.push({ 
+          pitch: Tone.Frequency(nota).toMidi(), 
+          startTime: tiempo, 
+          endTime: tiempo + 0.5,
+          velocity: 100
+        });
+      }
+    }
+
+    function detenerNota(nota) {
+      synth.triggerRelease(nota);
+      const keys = document.querySelectorAll(`.key[data-note="${nota}"]`);
+      keys.forEach(key => key.classList.remove('active'));
+    }
+
+    // Mostrar nota en el visualizador
+    function mostrarNota(nota) {
+      const noteElement = document.createElement("div");
+      noteElement.className = "note-display";
+      
+      const noteName = document.createElement("span");
+      noteName.className = "note-name";
+      noteName.textContent = nota.replace(/[0-9]/g, '');
+      
+      const noteOctave = document.createElement("span");
+      noteOctave.className = "note-octave";
+      noteOctave.textContent = nota.replace(/\D/g, '');
+      
+      noteElement.appendChild(noteName);
+      noteElement.appendChild(noteOctave);
+      
+      notasContainer.prepend(noteElement);
+      
+      // Limitar a 12 notas mostradas
+      if (notasContainer.children.length > 12) {
+        notasContainer.removeChild(notasContainer.lastChild);
+      }
+    }
+
+    // Generar melodía con IA
+    async function generarMelodia() {
+      try {
+        detenerBtn.disabled = false;
+        
+        const seed = {
+          notes: [
+            { pitch: 60, startTime: 0.0, endTime: 0.5, velocity: 100 },
+            { pitch: 62, startTime: 0.5, endTime: 1.0, velocity: 100 }
+          ],
+          totalTime: 1.0
+        };
+        
+        const steps = 32;
+        const temperatura = 1.1;
+        
+        const melodia = await rnn.continueSequence(seed, steps, temperatura);
+        player.start(melodia);
+        
+        // Mostrar notificación
+        mostrarNotificacion('Melodía generada con éxito', 'success');
+      } catch (error) {
+        console.error("Error al generar melodía:", error);
+        mostrarNotificacion('Error al generar melodía', 'error');
+      }
+    }
+
+    // Detener melodía
+    function detenerMelodia() {
+      if (player && player.isPlaying()) {
+        player.stop();
+        detenerBtn.disabled = true;
+        mostrarNotificacion('Reproducción detenida', 'info');
+      }
+    }
+
+    // Iniciar grabación
+    function iniciarGrabacion() {
+      grabacion = [];
+      grabando = true;
+      inicioGrabacion = Tone.now();
+      detenerGrabacionBtn.disabled = false;
+      guardarBtn.disabled = true;
+      document.getElementById('grabarBtn').classList.add('recording');
+      mostrarNotificacion('Grabación iniciada - Toca el piano para grabar', 'info');
+    }
+
+    // Detener grabación
+    function detenerGrabacion() {
+      grabando = false;
+      detenerGrabacionBtn.disabled = true;
+      document.getElementById('grabarBtn').classList.remove('recording');
+      if (grabacion.length > 0) {
+        guardarBtn.disabled = false;
+        mostrarNotificacion('Grabación finalizada - Lista para guardar', 'success');
+      } else {
+        mostrarNotificacion('Grabación vacía - No se capturaron notas', 'warning');
+      }
+    }
+
+    // Guardar melodía
+    function guardarMelodia() {
+      if (grabacion.length === 0) {
+        mostrarNotificacion('No hay grabación para guardar', 'warning');
+        return;
+      }
+
+      const totalTime = grabacion[grabacion.length - 1].endTime;
+      const sequence = { 
+        notes: grabacion, 
+        totalTime: totalTime,
+        quantizationInfo: { stepsPerQuarter: 4 }
+      };
+
+      // Crear archivo JSON
+      const blob = new Blob([JSON.stringify(sequence, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      // Descargar archivo
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `melodia-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      mostrarNotificacion('Melodía guardada como archivo JSON', 'success');
+    }
+
+    async function subirMelodia() {
+      if (grabacion.length === 0) {
+        mostrarNotificacion('No hay grabación para subir', 'warning');
+        return;
+      }
+
+      const totalTime = grabacion[grabacion.length - 1].endTime;
+      const sequence = { notes: grabacion, totalTime: totalTime };
+
+      try {
+        const response = await fetch('/guardar_melodia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sequence)
+        });
+
+        if (response.ok) {
+          mostrarNotificacion('Melodía guardada en el servidor', 'success');
+        } else {
+          mostrarNotificacion('Error al guardar la melodía', 'error');
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        mostrarNotificacion('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    // Exportar a MIDI
+    async function exportarMIDI() {
+      try {
+        let sequence;
+        
+        if (grabacion.length > 0) {
+          sequence = {
+            notes: grabacion,
+            totalTime: grabacion[grabacion.length - 1].endTime
+          };
+        } else {
+          // Si no hay grabación, generar una secuencia de ejemplo
+          sequence = {
+            notes: [
+              { pitch: 60, startTime: 0.0, endTime: 0.5, velocity: 100 },
+              { pitch: 62, startTime: 0.5, endTime: 1.0, velocity: 100 },
+              { pitch: 64, startTime: 1.0, endTime: 1.5, velocity: 100 },
+              { pitch: 65, startTime: 1.5, endTime: 2.0, velocity: 100 }
+            ],
+            totalTime: 2.0
+          };
+        }
+
+        const midiBytes = mm.sequenceProtoToMidi(mm.sequenceToProto(sequence));
+        const blob = new Blob([midiBytes], { type: 'audio/midi' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `melodia-${new Date().toISOString().slice(0,10)}.mid`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        mostrarNotificacion('Archivo MIDI exportado con éxito', 'success');
+      } catch (error) {
+        console.error("Error al exportar MIDI:", error);
+        mostrarNotificacion('Error al exportar a MIDI', 'error');
+      }
+    }
+    
+    // Mostrar notificación
+    function mostrarNotificacion(mensaje, tipo) {
+      const notificacion = document.createElement('div');
+      notificacion.className = `notificacion ${tipo}`;
+      notificacion.textContent = mensaje;
+      
+      document.body.appendChild(notificacion);
+      
+      setTimeout(() => {
+        notificacion.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        notificacion.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(notificacion);
+        }, 300);
+      }, 3000);
+    }
+  </script>
+<script src="{{ url_for('static', filename='js/juegos.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

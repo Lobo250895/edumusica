@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Ingresa Música</h1>
+                </div>
+                <h1>Editar Canción</h1>
+                <form method="POST" enctype="multipart/form-data">
+                    <label for="titulo">Título:</label>
+                    <input type="text" name="titulo" value="{{ cancion.titulo }}" required>
+
+                    <label for="artista">Artista:</label>
+                    <input type="text" name="artista" value="{{ cancion.artist }}">
+
+                    <label for="album">Álbum:</label>
+                    <input type="text" name="album" value="{{ cancion.album }}">
+
+                    <label for="categoria">Categoría:</label>
+                    <input type="text" name="categoria" value="{{ cancion.categoria }}">
+
+                    <label for="archivo">Archivo de música (dejar vacío para no cambiar):</label>
+                    <input type="file" name="archivo" accept="audio/*">
+
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                    <a href="{{ url_for('musica_admin') }}" class="btn btn-danger">Cancelar</a>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

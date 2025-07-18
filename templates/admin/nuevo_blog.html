@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Admin - Edumúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilo_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        {% include 'admin/sidebar_admin.html' %}
+
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1 class="page-title">Blog Posts</h1>
+                </div>
+                <h1>Nuevo Blog</h1>
+                <form method="POST" enctype="multipart/form-data">
+                    <label for="nombre">Título:</label>
+                    <input type="text" name="nombre" required>
+
+                    <label for="contenido">Contenido:</label>
+                    <textarea name="contenido" rows="6" required></textarea>
+
+                    <label for="imagen">Imagen (URL o subir nueva):</label>
+                    <input type="text" name="imagen" value="{{ post.imagen }}">
+
+                    <button type="submit" class="btn btn-success">Crear</button>
+                    <a href="{{ url_for('blog_admin') }}" class="btn btn-danger">Cancelar</a>
+                </form>
+
+                
+            </div>
+        </main>
+    </div>
+</body>
+</html>

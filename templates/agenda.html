@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Docente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+     <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilos_agenda.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    {% include 'sidebar.html' %}
+    <!-- Panel de notificaciones -->
+    <div id="main-content">
+        {% include 'notifications.html' %}
+    </div>
+
+    <div class="container">
+        <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+        </div>
+        <header>
+            <h1>Agenda Docente</h1>
+            <button id="syncBtn" class="sync-btn" onclick="location.href='/sync'">
+                <span class="material-icons">sync</span>
+                Sincronizar con Google
+            </button>
+        </header>
+
+        <div class="agenda-container">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <div class="month-navigation">
+                        <button class="nav-btn material-icons">chevron_left</button>
+                        <span class="current-month">Mayo 2023</span>
+                        <button class="nav-btn material-icons">chevron_right</button>
+                    </div>
+                </div>
+
+                <div class="calendar-grid" id="dayHeaders">
+                    <div class="day-header">Lun</div>
+                    <div class="day-header">Mar</div>
+                    <div class="day-header">Mié</div>
+                    <div class="day-header">Jue</div>
+                    <div class="day-header">Vie</div>
+                    <div class="day-header">Sáb</div>
+                    <div class="day-header">Dom</div>
+                </div>
+
+                <div class="calendar-grid" id="calendarDays"></div>
+            </div>
+
+            <div class="events-section">
+                <div class="events-header">
+                    <div class="selected-date">15 de Mayo, 2023</div>
+                    <button id="addEventBtn" class="add-event-btn">
+                        <span class="material-icons">add</span>
+                        Nuevo Evento
+                    </button>
+                </div>
+
+                <div class="events-list" id="eventsList">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Mis Escuelas -->
+        <div class="data-section">
+            <div class="section-header">
+                <h2 class="section-title">Mis Escuelas</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                {% if "escuela" in category %}
+                                    <div class="flash-{{ category }}">{{ message }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <button id="addSchoolBtn" class="add-btn">
+                    <span class="material-icons">add</span>
+                    Agregar Escuela
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Cese</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schoolsTableBody">
+                        {% for escuela in escuelas %}
+                        <tr data-id="{{ escuela.id_escuela }}">
+                            <td>{{ escuela.nombre_escuela }}</td>
+                            <td>{{ escuela.direccion }}</td>
+                            <td>{{ escuela.telefono or '-' }}</td>
+                            <td>{{ escuela.fecha_inicio }}</td>
+                            <td>{{ escuela.fecha_cese or 'Activo' }}</td>
+                            <td class="actions-cell">
+                                <button class="btn btn-primary edit-school" style="background-color: #ffc107; color: #212529; width: 100px; padding: 8px 12px;">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-primary delete-school" style="background-color: #dc3545; color: white; width: 100px; padding: 8px 12px;" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección de Reportes -->
+       <div class="data-section">
+            <div class="section-header">
+                <h2 class="section-title">Reportes de Alumnos</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                {% if "reporte" in category %}
+                                    <div class="flash-{{ category }}">{{ message }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <button id="addReportBtn" class="add-btn">
+                    <span class="material-icons">add</span>
+                    Nuevo Reporte
+                </button>
+
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Escuela</th>
+                            <th>Alumno</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        {% for reporte in reportes %}
+                        <tr data-id="{{ reporte.id_reporte }}">
+                            <td>{{ reporte.fecha_reporte }}</td>
+                            <td>{{ reporte.nombre_escuela or '-' }}</td>
+                            <td>{{ reporte.nombre_alumno }} {{ reporte.apellido_alumno }}</td>
+                            <td>
+                                <span class="report-type-badge {{ reporte.tipo }}">
+                                    {{ reporte.tipo|replace('conducta', 'Conducta')|replace('academico', 'Académico')|replace('asistencia', 'Asistencia')|replace('felicitacion', 'Felicitación')|replace('otro', 'Otro') }}
+                                </span>
+                            </td>
+                            <td class="description-cell">{{ reporte.descripcion[:50] }}{% if reporte.descripcion|length > 50 %}...{% endif %}</td>
+                            <td class="actions-cell">
+                                <button class="btn btn-primary view-report"style="background-color: #17a2b8; color: white;width: 100px; padding: 8px 12px;" title="Ver"><i class="fas fa-eye"></i>Ver</button>
+                                <button class="btn btn-primary edit-report"style="background-color: #ffc107; color: #212529; width: 100px; padding: 8px 12px;"><i class="fas fa-edit"></i>Editar</button>
+                                <button class="btn btn-primary delete-report"style="background-color: #dc3545; color: white; width: 100px; padding: 8px 12px;" title="Eliminar"> <i class="fas fa-trash-alt"></i>Eliminar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+    </div>
+
+    <!-- Modal para Eventos -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Nuevo Evento</h2>
+                <button class="close-modal material-icons" id="closeModal">close</button>
+            </div>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle" class="form-label">Título</label>
+                    <input type="text" id="eventTitle" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventType" class="form-label">Tipo</label>
+                    <select id="eventType" class="form-select" required>
+                        <option value="class">Clase</option>
+                        <option value="rehearsal">Ensayo</option>
+                        <option value="important">Evento Importante</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate" class="form-label">Fecha</label>
+                    <input type="date" id="eventDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="startTime" class="form-label">Hora de inicio (Opcional)</label>
+                    <input type="time" id="startTime" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="endTime" class="form-label">Hora de fin (Opcional)</label>
+                    <input type="time" id="endTime" class="form-input" >
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation" class="form-label">Lugar (Opcional)</label>
+                    <input type="text" id="eventLocation" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription" class="form-label">Descripción (Opcional)</label>
+                    <textarea id="eventDescription" class="form-input" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Escuelas -->
+    <div class="modal" id="schoolModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="schoolModalTitle">Agregar Escuela</h2>
+                <button class="close-modal material-icons" id="closeSchoolModal">close</button>
+            </div>
+            <form id="schoolForm" class="school-form">
+                <input type="hidden" id="schoolId">
+                <div class="form-group">
+                    <label for="schoolName" class="form-label">Nombre de la Escuela*</label>
+                    <input type="text" id="schoolName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="schoolAddress" class="form-label">Dirección*</label>
+                    <input type="text" id="schoolAddress" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="schoolPhone" class="form-label">Teléfono</label>
+                    <input type="text" id="schoolPhone" class="form-input">
+                </div>
+                <div class="date-fields">
+                    <div class="form-group">
+                        <label for="startDate" class="form-label">Fecha de Inicio*</label>
+                        <input type="date" id="startDate" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate" class="form-label">Fecha de Cese (opcional)</label>
+                        <input type="date" id="endDate" class="form-input">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelSchoolBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Reportes -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="reportModalTitle">Nuevo Reporte</h2>
+                <button class="close-modal material-icons" id="closeReportModal">close</button>
+            </div>
+            <form id="reportForm" class="report-form">
+                <input type="hidden" id="reportId">
+                <div class="form-group">
+                    <label for="reportSchool" class="form-label">Escuela*</label>
+                    <select id="reportSchool" class="form-select" required>
+                        <option value="">Seleccione una escuela</option>
+                        {% for escuela in escuelas %}
+                        <option value="{{ escuela.id_escuela }}">{{ escuela.nombre_escuela }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="student-info">
+                    <div class="form-group">
+                        <label for="studentName" class="form-label">Nombre del Alumno*</label>
+                        <input type="text" id="studentName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentLastName" class="form-label">Apellido del Alumno*</label>
+                        <input type="text" id="studentLastName" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reportType" class="form-label">Tipo de Reporte*</label>
+                    <select id="reportType" class="form-select" required>
+                        <option value="conducta">Problema de Conducta</option>
+                        <option value="academico">Problema Académico</option>
+                        <option value="asistencia">Problema de Asistencia</option>
+                        <option value="felicitacion">Felicitación</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportDate" class="form-label">Fecha del Reporte*</label>
+                    <input type="date" id="reportDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="reportDescription" class="form-label">Descripción*</label>
+                    <textarea id="reportDescription" class="form-textarea" rows="4" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelReportBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Reporte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Ver Reporte -->
+    <div class="modal" id="viewReportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="viewReportTitle">Detalles del Reporte</h2>
+                <button class="close-modal material-icons" id="closeViewReportModal">close</button>
+            </div>
+            <div id="reportDetails" class="report-details-container"></div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" id="closeViewReportBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script id="events-data" type="application/json">
+        {{ eventos|tojson|safe }}
+    </script>
+    <script id="events-data" type="application/json">
+        {{ eventos|tojson|safe }}
+    </script>
+    <script id="schools-data" type="application/json">
+        {{ escuelas|tojson|safe }}
+    </script>
+    <script id="reports-data" type="application/json">
+        {{ reportes|tojson|safe }}
+    </script>
+
+    <script>
+        window.IMG_BASE_PATH = "{{ url_for('static', filename='img/') }}";
+        window.LOGO_DARK = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+        window.LOGO_LIGHT = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+        window.LOGO_DEFAULT = "{{ url_for('static', filename='img/logo-default.png') }}";
+    </script>
+<script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script> 
+<script src="{{ url_for('static', filename='js/agenda.js') }}"></script>
+<script src="{{ url_for('static', filename='js/repo_esc.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>

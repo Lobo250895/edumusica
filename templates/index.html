@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>EduMusica</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            z-index: 10;
+            width: 300px;
+        }
+
+        .note {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            color: white;
+            animation: fall linear;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh);
+                opacity: 0;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="intro-container">
+        <img src="{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}" alt="Logo Intro" class="intro-image">
+        <p>Cargando...</p>
+    </div>
+
+    <script>
+        const notas = ['🎵', '🎶', '♫', '♬'];
+
+        function crearNota() {
+            const nota = document.createElement('div');
+            nota.className = 'note';
+            nota.textContent = notas[Math.floor(Math.random() * notas.length)];
+            nota.style.left = Math.random() * window.innerWidth + 'px';
+            nota.style.animationDuration = (Math.random() * 3 + 2) + 's'; // 2-5 segundos
+
+            document.body.appendChild(nota);
+
+            setTimeout(() => nota.remove(), 6000);
+        }
+
+        setInterval(crearNota, 200); // frecuencia de notas
+
+        // Redirección tras 6 segundos
+        setTimeout(function () {
+            window.location.href = "{{ url_for('entrada') }}";
+        }, 6000);
+    </script>
+
+</body>
+</html>

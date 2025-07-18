@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabajos de Luthiers - EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/estilos_luthiers.css') }}">
+    
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    {% include 'sidebar.html' %}
+    {% include 'notifications.html' %}
+
+    <section class="home">
+        <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+        </div>
+
+        <main class="luthiers-section">
+            <div class="section-header">
+                <h1><i class='bx bx-hammer'></i> Trabajos de Luthiers para la escuela </h1>
+                <p>Explora y comparte los increíbles trabajos artesanales de construcción y reparación de instrumentos musicales</p>
+            </div>
+            <div style="text-align: right; margin-bottom: 20px;">
+                <button id="open-form-btn" class="btn-submit" style="display: inline-flex;">
+                    <i class='bx bx-plus'></i> Nuevo Trabajo
+                </button>
+            </div>
+
+            <!-- Grid de trabajos -->
+            <div class="luthiers-grid">
+                {% for trabajo in trabajos_luthiers %}
+                <div class="luthier-card">
+                    <div class="luthier-media">
+                        <img class="luthier-img" src="{{ trabajo.imagen }}" alt="{{ trabajo.titulo }}">
+                        {% if trabajo.video_url %}
+                        <span class="media-badge"><i class='bx bx-video'></i> Video</span>
+                        {% endif %}
+                        {% if trabajo.pdf_url %}
+                        <span class="media-badge"><i class='bx bx-file'></i> PDF</span>
+                        {% endif %}
+                    </div>
+                    <div class="luthier-content">
+                        <h3 class="luthier-title">{{ trabajo.titulo }}</h3>
+                        <p class="luthier-desc">{{ trabajo.descripcion|truncate(150) }}</p>
+                        <p class="full-desc" style="display:none;">{{ trabajo.descripcion }}</p>
+                        <div class="luthier-meta">
+                            <div class="luthier-author">
+                                <span>
+                                    {% if trabajo.es_propio %}
+                                        {{ profesor.nombre }} {{ profesor.apellido }} (Tú)
+                                    {% else %}
+                                        {{ trabajo.autor }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <span id="modal-date"></span>
+                        </div>
+                        <div class="luthier-actions">
+                            <button class="action-btn view-details"
+                                    data-id="{{ trabajo.id }}"
+                                    data-url="{{ trabajo.imagen_url }}"
+                                    data-titulo="{{ trabajo.titulo }}"
+                                    data-descripcion="{{ trabajo.descripcion }}"
+                                    data-video="{{ trabajo.video_url }}"
+                                    data-pdf="{{ trabajo.pdf_url }}">
+                                <i class='bx bx-show'></i> Ver más
+                            </button>
+
+
+                            {% if trabajo.pdf_url %}
+                            <a href="{{ trabajo.pdf_url }}" class="action-btn" target="_blank" download>
+                                <i class='bx bx-download'></i> PDF
+                            </a>
+                            {% endif %}
+
+                            {% if trabajo.es_propio %}
+                            <a href="{{ url_for('editar_instrumento_route', id=trabajo.id) }}" style="background-color: #f44336; border: none;color: white;padding: 6px 14px;border-radius: 4px;cursor: pointer;font-weight: 600;transition: background-color 0.3s ease;">Editar</a>
+                            
+                            <form action="{{ url_for('eliminar_instrumento_route', id=trabajo.id) }}" method="POST">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Modal para ver detalles -->
+            <div id="luthier-modal" class="luthier-modal">
+                <div class="modal-overlay"></div>
+                <div class="modal-content">
+                    <button id="close-modal" class="close-modal">
+                        <i class='bx bx-x'></i>
+                    </button>
+                    <div class="modal-media">
+                        <img id="modal-image" src="" alt="">
+                    </div>
+                    <div class="modal-details">
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-desc" class="modal-desc"></p>
+                        
+                        <div id="modal-video-container" class="modal-video" style="display: none;">
+                            <iframe id="modal-video" src="" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        
+                        <div class="luthier-meta">
+                            <div class="luthier-author">
+                                <span id="modal-author">{{ profesor.nombre }} {{ profesor.apellido }}</span>
+                            </div>
+                            <span id="modal-date"></span>
+                        </div>
+                        <a id="modal-pdf-link" href="#" class="modal-pdf" style="display: none;">
+                            <i class='bx bx-download'></i> Descargar PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario para subir nuevo trabajo (inicialmente oculto) -->
+            <div id="upload-form-container" class="upload-form-container" style="display: none;">
+                <div class="form-header">
+                    <h2><i class='bx bx-plus-circle'></i> Compartir Nuevo Trabajo</h2>
+                    <p>Comparte tus proyectos de construcción o reparación de instrumentos con la comunidad</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">
+                            <i class='bx bx-info-circle'></i> {{ message }}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+
+                <form id="luthier-form" action="/instrumentos" method="POST" enctype="multipart/form-data">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="titulo">Título del trabajo *</label>
+                            <input type="text" id="titulo" name="titulo" required placeholder="Ej: Construcción de guitarra clásica">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="estado">Visibilidad *</label>
+                            <select id="estado" name="estado" required>
+                                <option value="publico">Público</option>
+                                <option value="privado">Privado (solo profesores)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="descripcion">Descripción detallada *</label>
+                            <textarea id="descripcion" name="descripcion" required placeholder="Describe el proceso, materiales utilizados, técnicas aplicadas..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Imagen principal *</label>
+                            <div class="upload-area" id="image-upload-area">
+                                <i class='bx bx-image-add'></i>
+                                <p>Arrastra una imagen o haz clic para seleccionar</p>
+                                <span>Formatos: JPG, PNG (Máx. 5MB)</span>
+                                <input type="file" id="imagen" name="imagen" accept="image/*" hidden required>
+                            </div>
+                            <div class="preview-container" id="image-preview">
+                                <img id="preview-image" class="preview-img">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Documento PDF (opcional)</label>
+                            <div class="upload-area" id="pdf-upload-area">
+                                <i class='bx bx-file'></i>
+                                <p>Arrastra un PDF o haz clic para seleccionar</p>
+                                <span>Máximo 10MB</span>
+                                <input type="file" id="pdf" name="pdf" accept="application/pdf" hidden>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="video_url">URL de video (opcional)</label>
+                            <input type="url" id="video_url" name="video_url" placeholder="https://youtube.com/...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancel-form" class="btn btn-cancel">
+                            <i class='bx bx-x'></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-submit">
+                            <i class='bx bx-cloud-upload'></i> Publicar Trabajo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        {% include 'footer.html' %}
+    </section>
+
+    
+
+
+<script>
+const logoModoOscuro = "{{ url_for('static', filename='img/Logo_tesis-pequeño.png') }}";
+const logoModoClaro = "{{ url_for('static', filename='img/Logo_tesis-pequeño_blanco.png') }}";
+</script>
+<script src="{{ url_for('static', filename='js/modo-logo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_instrumentos.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musica- EduMúsica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles_apis.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+AU+VIC+Guides&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+
+    <style>
+        .btn-sugerencia {
+  background-color: #2c7a7b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.sugerencia-box {
+  background-color: #f1f9ff;
+  border-left: 4px solid #2c7a7b;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+    </style>
+  {% include 'sidebar.html' %}
+    <section class="home">
+        <div class="logo-container">
+            <img id="logo" src="/static/img/Logo_tesis-peque%C3%B1o.png" alt="Logo EduMúsica">
+            <button onclick="location.href='/principal'" class="btn btn-primary" style="background-color: rgb(3, 88, 15);">
+                <i class="fas fa-arrow-left"></i> Volver al inicio
+            </button>
+        </div>
+      <!-- Panel de notificaciones -->
+      <div id="main-content">
+        <!-- Incluir la plantilla de notificaciones -->
+        {% include 'notifications.html' %}
+      </div>
+          <div class="titulo">
+            <h2>Explora Nuestra Colección Musical</h2>
+          </div>
+        <div class="mx-auto text-center">
+            <div class="accordianBox">
+              <div class="items">
+                <div class="item">
+                  <div class="imgtitle">
+                  </div>
+                  <a href="#">
+                    <img src="{{ url_for('static', filename='uploads/discos_imagenes/DeWatermark.ai_1734062049494 (1).png') }}" alt="Imagen 1" />
+                  </a>
+                </div>
+                <div class="item">
+                  <div class="imgtitle">
+                  </div>
+                  <a href="#">
+                    <img src="{{ url_for('static', filename='uploads/discos_imagenes/Taylorguitar.jpg') }}" alt="Imagen 2" />
+                  </a>
+                </div>
+                <div class="item">
+                  <div class="imgtitle">
+                  </div>
+                  <a href="#">
+                    <img src="{{ url_for('static', filename='uploads/discos_imagenes/fotojet.jpg') }}" alt="Imagen 3" />
+                  </a>
+                </div>
+                <div class="item">
+                  <div class="imgtitle">
+                  </div>
+                  <a href="#">
+                    <img src="{{ url_for('static', filename='uploads/discos_imagenes/orquesta.jpg') }}" alt="Imagen 4" />
+                  </a>
+                </div>
+                <div class="item">
+                  <div class="imgtitle">
+                  </div>
+                  <a href="#">
+                    <img src="{{ url_for('static', filename='uploads/discos_imagenes/bandera.png') }}" alt="Imagen 5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="titulo">
+            <h6>selecciona lo que quieres escuchar</h6>
+        </div>
+
+
+      <div class="vinyl-collection">
+        <!-- Vinilo de Folklore -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='Folklore') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/fotojet.jpg') }}" alt="Folklore" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Folklore</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('folklore', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+                <button class="btn-sugerencia" onclick="mostrarSugerencia('folklore')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-folklore" style="display:none;">
+                    <p><strong>Folklore:</strong> Explorá ritmos tradicionales como la zamba, chacarera o carnavalito. Proponé análisis de letras desde lo poético y lo social. Podés trabajar acompañamientos con guitarra o percusión, o incluso organizar un pequeño ensamble de música andina. Ideal para incluir historia y geografía cultural argentina.</p>
+                </div>
+        </div>
+
+        <!-- Vinilo de Música Patria -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='patria') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/patrias.png') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Música Patria</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('patria', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('patria')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-patria" style="display:none;">
+                    <p><strong>Música Patria:</strong> Utilizá estas canciones para trabajar contextos históricos, analizar simbología musical y reflexionar sobre identidad nacional. Proponé arreglos vocales grupales, versiones instrumentales o creación de pequeñas obras inspiradas en fechas patrias.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Actos Escolares -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='actos') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/actos_escolares.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Actos</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('actos', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('actos')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-actos" style="display:none;">
+                    <p><strong>Actos:</strong> Incentivá la participación del alumnado en los actos escolares a través de ensayos vocales, arreglos sencillos en instrumentos melódicos y percusivos, o composición de canciones originales en grupo para efemérides escolares.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Funk -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='funk') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/funk.jfif') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Funk</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('funk', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('funk')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-funk" style="display:none;">
+                    <p><strong>Funk:</strong> Abordá el groove, el bajo como eje rítmico, y la síncopa. Ideal para clases de ensamble instrumental, análisis auditivo de secciones (verso, estribillo, break), o improvisación con escalas pentatónicas. Podés trabajar covers o reinterpretaciones con batería electrónica o loopers.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Jazz -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='jazz') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/jazz.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Jazz</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('jazz', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('jazz')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-jazz" style="display:none;">
+                    <p><strong>Jazz:</strong> Introducí la historia del género y el rol de la improvisación. Proponé pequeñas jam sessions, trabajo con escalas blues, lectura de cifrados y reconocimiento de estructuras como AABA. Ideal para clases teórico-prácticas combinadas.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Malvinas -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='malvinas') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/malvinas.jfif') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Malvinas</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('malvinas', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('malvinas')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-malvinas" style="display:none;">
+                    <p><strong>Malvinas:</strong> Usá estas canciones como disparadores para reflexionar sobre la memoria colectiva. Trabajá desde la sensibilidad: composición de canciones, análisis de textos poéticos musicalizados o creación de paisajes sonoros que acompañen cartas reales de soldados.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Rock Nacional -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='rock') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/Rock_nacional.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Rock Nacional</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('rock', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('rock')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-rock" style="display:none;">
+                    <p><strong>Rock Nacional:</strong> Analizá lírica y contexto sociopolítico de cada década. Fomentá debates sobre libertad de expresión, usá las canciones como base para composición de letras nuevas o ensayos interpretativos con guitarra, bajo y batería.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Sonidos de Películas -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='pelicula') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/sonido_pelicula.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Sonidos de Peliculas</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('pelicula', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('pelicula')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-pelicula" style="display:none;">
+                    <p><strong>Sonidos de Películas:</strong> Analizá cómo la música construye clima emocional. Actividades: identificar leitmotivs, diseñar nuevas bandas sonoras para escenas mudas o crear música original con software libre. Ideal para conectar con materias como lengua o audiovisuales.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Sonidos de Entorno -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='entorno') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/sonidos_entorno.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Sonido de Entorno</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('entorno', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('entorno')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-entorno" style="display:none;">
+                    <p><strong>Sonido de Entorno:</strong> Trabajá la conciencia sonora. Salidas de campo para grabar sonidos, edición con programas DAW, construcción de relatos auditivos o creación de paisajes sonoros en grupo. Desarrollá la escucha activa.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Música Clásica -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='clasica') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/musica_clasica.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Musica clasica</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('clasica', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('clasica')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-clasica" style="display:none;">
+                    <p><strong>Música Clásica:</strong> Explorá diferentes períodos históricos. Analizá formas musicales (sonata, fuga, rondó), proponé audiciones dirigidas con mapas visuales o líneas de tiempo y fomentá la interpretación de fragmentos con instrumentos escolares o teclados MIDI.</p>
+                </div>
+        </div>
+
+         <!-- Tarjeta de Tango -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='tango') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/tango.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Tango</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('tango', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('tango')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-tango" style="display:none;">
+                    <p><strong>Tango:</strong> Presentá el tango como género identitario. Analizá el rol del bandoneón, el uso del lunfardo, estructura armónica típica. Podés organizar ensambles con teclados, violines o guitarras y conectar con literatura argentina.</p>
+                </div>
+        </div>
+
+        <!-- Tarjeta de Cajita de Música -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='cajita_de_musica') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/Taylorguitar.jpg') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Cajita de Musica cd</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('cajita_de_musica', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('cajita_de_musica')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-cajita_de_musica" style="display:none;">
+                    <p><strong>Cajita de Música:</strong> Ideal para trabajar análisis tímbrico y melodías simples. Proponé creación de obras breves con instrumentos melódicos (flauta dulce, teclado) o construcción de “cajas de música digitales” con apps o software de producción.</p>
+                </div>
+        </div>
+
+        <!-- Tarjeta de Música Pop -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='pop') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/musica_pop.png') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Pop</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('pop', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('pop')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-pop" style="display:none;">
+                    <p><strong>Pop:</strong> Analizá las estructuras típicas (verso, estribillo, puente), acordes recurrentes y evolución del género. Proponé actividades de cover, creación de canciones en grupos o producción de beats en plataformas digitales como Soundtrap o BandLab.</p>
+                </div>
+        </div>
+
+        <!-- Tarjeta de Música Latina -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='latina') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/latin_music.png') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Latina</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('latina', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('cajita_de_musica')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-latina" style="display:none;">
+                    <p><strong>Música Latina:</strong> Investigá estilos como salsa, cumbia o reguetón. Trabajá patrones rítmicos, improvisación de letras y actividades de percusión corporal o instrumental. Ideal para ensambles escolares o coreografías rítmicas integradas.</p>
+                </div>
+        </div>
+
+        <!-- Tarjeta de Rock and Roll -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='rockandroll') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/rockandrock.png') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Rock and Roll</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('rockandroll', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('rockandroll')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-rockandroll" style="display:none;">
+                    <p><strong>Rock and Roll:</strong> Analizá la estructura armónica de 12 compases, acordes de séptima y ritmo shuffle. Proponé interpretación con guitarras, bajos y batería o construcción de arreglos simples para grupos escolares. Ideal para trabajos prácticos.</p>
+                </div>
+        </div>
+
+        <!-- Tarjeta de Música Urbana -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='urbana') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/musica_urbana.jfif') }}" alt="Música Patria" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Urbana</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('urbana', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('urbana')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-urbana" style="display:none;">
+                    <p><strong>Urbana:</strong> Reflexioná sobre el uso del lenguaje, el ritmo y la identidad juvenil. Actividades: escribir rimas, crear bases rítmicas, grabar freestyle o analizar temáticas sociales presentes en el trap y rap argentino.</p>
+                </div>
+        </div>
+
+        <!-- Tarjeta de Canciones Compartidas -->
+        <div class="vinyl-container">
+            <a href="{{ url_for('reproductor', genero='compartido') }}" class="vinyl-link">
+                <div class="vinyl-disc">
+                    <div class="vinyl-image">
+                        <img src="{{ url_for('static', filename='uploads/discos_imagenes/fondo_instrumentos.png') }}" alt="Canciones Compartidas" loading="lazy">
+                    </div>
+                    <div class="vinyl-center"></div>
+                    <div class="vinyl-shadow"></div>
+                </div>
+                <div class="vinyl-info">
+                    <h3 class="vinyl-title">Canciones Compartidas</h3>
+                    <div class="vinyl-stats">
+                        <span><i class="fas fa-music"></i> {{ conteo_generos.get('compartido', 0) }} canciones</span>
+                    </div>
+                </div>
+            </a>
+            <button class="btn-sugerencia" onclick="mostrarSugerencia('compartido')">👨‍🏫 Ver sugerencias didácticas</button>
+                <div class="sugerencia-box" id="sugerencia-compartido" style="display:none;">
+                    <p><strong>Canciones Compartidas:</strong> Espacio ideal para que tus alumnos graben, compongan y compartan sus producciones musicales. Fomentá proyectos intercurso, uso de tecnología musical y presentaciones escolares en formato de festival o radio escolar.</p>
+                </div>
+        </div>
+      </div>
+
+      <div class="api_musica" id="resultados-api">
+          <h3>Datos de artistas, albunes y canciones</h3>
+          <div class="container_api">
+            <h1>Buscar Artista</h1>
+            <form method="POST" action="#resultados-api">
+                <input type="text" name="artist" placeholder="Ingrese el nombre del artista" required>
+                <button type="submit">Buscar</button>
+            </form>
+      
+            {% if artist_info %}
+                <h2>{{ artist_info.name }}</h2>
+                <p><strong>ID:</strong> {{ artist_info.id }}</p>
+                <p><strong>País:</strong> {{ artist_info.country if artist_info.country else 'Desconocido' }}</p>
+                <p><strong>Año de inicio:</strong> {{ artist_info["life-span"]["begin"] if artist_info["life-span"]["begin"] else 'Desconocido' }}</p>
+                
+                <h3>Álbumes</h3>
+                <ul class="album-list">
+                    {% for album in albums %}
+                        <li><strong>{{ album.title }}</strong> ({{ album.get("first-release-date", "Desconocido") }})</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+          </div>
+      </div>
+      {% include 'footer.html' %}
+    </section>
+
+<script>
+  function mostrarSugerencia(genero) {
+    const id = "sugerencia-" + genero;
+    const box = document.getElementById(id);
+    if (box.style.display === "none") {
+      box.style.display = "block";
+    } else {
+      box.style.display = "none";
+    }
+  }
+</script>
+
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reproductor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/js_notificaciones.js') }}"></script>
+</body>
+</html>
