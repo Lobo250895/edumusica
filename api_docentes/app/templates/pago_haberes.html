@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Fecha de Pago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Consulta de Fecha de Pago</h1>
+        <form action="/api/pago_haberes" method="POST" class="d-flex justify-content-center">
+            <input type="text" name="provincia" class="form-control w-50" placeholder="Ingrese la provincia" required>
+            <button type="submit" class="btn btn-primary ms-2">Buscar</button>
+        </form>
+
+        {% if resultados %}
+            <div class="mt-4">
+                <h2>Resultados:</h2>
+                {% for resultado in resultados %}
+                    <p><strong>Provincia:</strong> {{ resultado.provincia }}</p>
+                    <p><strong>Fecha de Pago:</strong> {{ resultado.fecha_pago }}</p>
+                    <p><strong>Fuente:</strong> <a href="{{ resultado.fuente }}" target="_blank">Ver fuente</a></p>
+                    <hr>
+                {% endfor %}
+            </div>
+        {% elif resultados is none and request.method == 'POST' %}
+            <div class="alert alert-warning mt-4">No se encontraron resultados para la provincia ingresada. Intenta con una variación o revisa la ortografía.</div>
+        {% endif %}
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
