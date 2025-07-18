@@ -1,0 +1,441 @@
+.juego_lobo{
+    background: linear-gradient(to bottom, #1e3c72, #2a5298);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: white;
+    margin: 0;
+}
+
+h1 {
+font-size: 2.5em;
+margin-bottom: 30px;
+}
+
+#piano_juego {
+display: flex;
+gap: 5px;
+margin-top: 30px;
+}
+
+.key_juego {
+width: 60px;
+height: 200px;
+background: white;
+border: 2px solid black;
+border-radius: 10px;
+text-align: center;
+line-height: 200px;
+font-weight: bold;
+color: black;
+cursor: pointer;
+transition: transform 0.1s;
+}
+.key_juego.active {
+background: yellow;
+transform: scale(1.05);
+}
+.key_juego.correct {
+background: lightgreen;
+}
+.key_juego.wrong {
+background: red;
+}
+#info {
+margin-top: 20px;
+font-size: 1.2em;
+}
+#startBtn {
+margin-top: 20px;
+padding: 10px 20px;
+font-size: 1.2em;
+border: none;
+background: #4caf50;
+color: white;
+border-radius: 8px;
+cursor: pointer;
+transition: background 0.3s;
+}
+#startBtn:hover {
+background: #388e3c;
+}
+
+
+/*api magenta*/
+
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background-color: #f5f5f5;
+    margin: 0;
+    background: url()no-repeat center center #000 !important;
+    outline: none;
+  }
+
+
+
+
+  .piano-container {
+    background-color: #34495e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin: 0 auto;
+    max-width: 800px;
+  }
+  .piano {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    position: relative;
+  }
+  .key {
+    width: 60px;
+    height: 200px;
+    margin: 0 2px;
+    border: 1px solid #2c3e50;
+    background: white;
+    cursor: pointer;
+    position: relative;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    transition: all 0.1s;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 10px;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  .key:active, .key.active {
+    background: #ecf0f1;
+    transform: translateY(2px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .controls {
+    margin: 30px auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .controls button {
+    margin: 5px;
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .controls button:hover {
+    background-color: #2980b9;
+  }
+  .controls button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+  }
+  #visualizador {
+    margin: 30px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 800px;
+  }
+  .note-display {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 12px;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 4px;
+  }
+  .black-key {
+    position: absolute;
+    width: 36px;
+    height: 120px;
+    background-color: #2c3e50;
+    z-index: 10;
+    top: 0;
+    margin-left: -18px;
+    border-radius: 0 0 4px 4px;
+    color: white;
+  }
+
+/* Estilos generales */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2c3e50;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --info-color: #1abc9c;
+  --light-color: #ecf0f1;
+  --dark-color: #34495e;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Slab', serif;
+  font-weight: 500;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.btn {
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.btn-danger.recording {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+
+/* Estilos del piano */
+.piano-container {
+  background-color: white;
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.piano {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+  height: 240px;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.key {
+  width: 60px;
+  height: 220px;
+  margin: 0 2px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  position: relative;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: all 0.1s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 15px;
+  font-weight: bold;
+  color: var(--dark-color);
+  z-index: 1;
+}
+
+.key span {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.key:active, .key.active {
+  background: linear-gradient(to bottom, #f1f1f1, #e0e0e0);
+  transform: translateY(3px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.black-key {
+  position: absolute;
+  width: 40px;
+  height: 140px;
+  background: linear-gradient(to bottom, #2c3e50, #34495e);
+  z-index: 2;
+  top: 10px;
+  margin-left: -20px;
+  border-radius: 0 0 6px 6px;
+  color: white;
+}
+
+.black-key span {
+  color: white;
+}
+
+/* Controles */
+.controls {
+  margin: 25px 0;
+}
+
+/* Visualizador de notas */
+#visualizador {
+  min-height: 100px;
+}
+
+.note-display {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.note-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.note-octave {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Juego de memoria */
+.juego-container {
+  padding: 20px;
+}
+
+#piano_juego {
+  margin: 30px 0;
+}
+
+.key_juego {
+  width: 50px;
+  height: 180px;
+  background: linear-gradient(to bottom, white, #f1f1f1);
+  border: 2px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  text-align: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  font-weight: bold;
+  color: var(--dark-color);
+  cursor: pointer;
+  transition: all 0.1s;
+  margin: 0 3px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.key_juego span {
+  font-size: 14px;
+}
+
+.key_juego.active {
+  background: linear-gradient(to bottom, #ffe600, #ffd700);
+  transform: translateY(3px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.key_juego.correct {
+  background: linear-gradient(to bottom, #2ecc71, #27ae60);
+  color: white;
+}
+
+.key_juego.wrong {
+  background: linear-gradient(to bottom, #e74c3c, #c0392b);
+  color: white;
+}
+
+.game-info {
+  margin-bottom: 20px;
+}
+
+.nivel-msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0,0,0,0.8);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+
+.nivel-msg.show {
+  opacity: 1;
+}
+
+.game-over-msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  color: var(--dark-color);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2)
+}

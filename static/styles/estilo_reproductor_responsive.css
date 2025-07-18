@@ -1,0 +1,85 @@
+
+/* MEJORAS RESPONSIVE PARA CELULARES Y TABLETS */
+
+/* Playlist adaptable */
+@media (max-width: 768px) {
+  .biblioteca .playlist {
+    max-width: 100%;
+  }
+
+  .biblioteca .playlist-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tabla-musica {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .track {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .track-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+}
+
+/* Reproductor adaptable */
+@media (max-width: 576px) {
+  .spotify-player {
+    height: auto;
+    padding: 1rem;
+    flex-direction: column;
+  }
+
+  .player-left,
+  .player-center,
+  .player-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  #player-song-title,
+  #player-song-artist {
+    max-width: 100%;
+  }
+
+  #player-album-cover {
+    margin-bottom: 10px;
+  }
+
+  .player-controls {
+    gap: 1rem;
+  }
+
+  .player-right {
+    gap: 1rem;
+  }
+
+  .track-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .play-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .biblioteca {
+    padding: 1.5rem;
+  }
+
+  .playlist-grid {
+    grid-template-columns: 1fr;
+  }
+}

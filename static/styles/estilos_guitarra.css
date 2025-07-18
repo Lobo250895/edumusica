@@ -1,0 +1,277 @@
+body {
+	background: url()no-repeat center center #000 !important;
+	font-family: Arial, Helvetica, San-serif;
+	margin:0;
+	outline: none;
+}
+
+#s1 {
+	background-image: url("/static/uploads/instrumentos/cuerda_1.png"); 
+}
+#s2 {
+	background-image: url("/static/uploads/instrumentos/cuerda_2.png");
+}
+#s3 {
+	background-image: url("/static/uploads/instrumentos/cuerda_3.png");
+}
+#s4 {
+	background-image: url("/static/uploads/instrumentos/cuerda_4.png");
+}
+#s5 {
+	background-image: url("/static/uploads/instrumentos/cuerda_5.png");
+}
+#s6 {
+	background-image: url("/static/uploads/instrumentos/cuerda_6.png");
+}
+
+
+@keyframes vibrate {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+}
+
+.string.vibrating {
+    animation: vibrate 0.1s linear 5; /* Ajusta la duración y repeticiones */
+}
+
+
+.card-title {
+    margin-bottom: var(--bs-card-title-spacer-y);
+    color: var(--bs-card-title-color);
+    color: black!important;
+}
+
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+/* Contenedor de la guitarra */
+.guitar-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Mástil de la guitarra */
+.guitar-neck {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(to right, #8B4513, #A0522D, #8B4513);
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+/* Cejilla */
+.guitar-nut {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-color: #f5f5f5;
+    z-index: 2;
+}
+
+/* Trastes */
+.guitar-frets {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.fret {
+    height: 2px;
+    background-color: #ccc;
+    width: 100%;
+}
+
+/* Marcadores de traste */
+.fret-markers {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.3);
+}
+
+/* Cuerdas de guitarra */
+.guitar-strings {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    z-index: 3;
+}
+
+.guitar-string {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background-color: #f5f5f5;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 4;
+}
+
+.guitar-string:hover {
+    background-color: #e27d1e;
+    box-shadow: 0 0 10px #e27d1e;
+    height: 4px;
+}
+
+.guitar-string#s6 { background-color: #f5f5f5; height: 3px; }
+.guitar-string#s5 { background-color: #f0f0f0; height: 2.5px; }
+.guitar-string#s4 { background-color: #e8e8e8; height: 2px; }
+.guitar-string#s3 { background-color: #dcdcdc; height: 1.5px; }
+.guitar-string#s2 { background-color: #d0d0d0; height: 1px; }
+.guitar-string#s1 { background-color: #c0c0c0; height: 0.8px; }
+
+/* Notas de las cuerdas */
+.string-notes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.string-note {
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.string-note.active {
+    background-color: rgba(226, 125, 30, 0.2);
+    transform: scale(1.1);
+}
+
+.note {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+}
+
+.note-name {
+    display: block;
+    font-size: 16px;
+    color: #666;
+}
+
+.string-note.active .note,
+.string-note.active .note-name {
+    color: #e27d1e;
+    text-shadow: 0 0 5px rgba(226, 125, 30, 0.5);
+}
+
+
+
+
+/* Animación de vibración */
+@keyframes vibrate {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+}
+
+.guitar-string.vibrating {
+    animation: vibrate 0.1s linear 5;
+}
+
+/* Instrucciones */
+.instructions {
+    border-left: 4px solid #e27d1e;
+}
+
+
+
+/* MEDIA QUERIES */
+@media (max-width: 768px) {
+    .guitar-neck {
+        height: 250px;
+    }
+    
+    .note {
+        font-size: 22px;
+    }
+    
+    .note-name {
+        font-size: 14px;
+    }
+    
+    .controls .btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 380px){
+	section {
+		margin-left: 0;
+	}
+}
+
+@media only screen and (max-width: 359px){
+	section {
+		margin-left: 0px;
+		background-position-x: -26px;
+	}
+
+}
+
+@media only screen and (max-width: 320px){
+	section {
+		width: 320px;
+		padding-left: 5px;
+		box-sizing: border-box;
+		margin-right: 0;
+		background-position-x: -21px;
+	}
+	.notes {
+		width: 320px;
+		margin-left: 0px;
+	}
+	.notes span {
+		width: 48px;
+	}
+	button.string:first-child {
+		margin-left: 0 !important;
+	}
+	button.string:last-child {
+		margin-right: 0!important;
+	}
+}
